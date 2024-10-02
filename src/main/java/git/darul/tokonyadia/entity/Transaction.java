@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,11 +22,15 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "customer_id",nullable = false)
-    private String customerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
-    @Column(name = "store_id", nullable = false)
-    private String storeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false, referencedColumnName = "id")
+    private Store store;
 
-
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "transaction")
+    private List<TransactionDetail> transactionDetails;
 }

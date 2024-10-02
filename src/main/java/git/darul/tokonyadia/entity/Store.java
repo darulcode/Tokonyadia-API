@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,4 +34,10 @@ public class Store {
 
     @Column(name = "phone_number", nullable = false, unique = true, length = 15)
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "store")
+    private List<Transaction> transactions;
+
+    @OneToMany(mappedBy = "store")
+    private List<Stock> stocks;
 }

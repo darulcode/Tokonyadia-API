@@ -19,12 +19,14 @@ public class Stock {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "product_id", nullable = false)
-    private String productId;
-
-    @Column(name = "store_id", nullable = false)
-    private String storeId;
-
     @Column(name = "stock")
     private Integer stock = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false, referencedColumnName = "id")
+    private Store store;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false, referencedColumnName = "id")
+    private Product product;
 }

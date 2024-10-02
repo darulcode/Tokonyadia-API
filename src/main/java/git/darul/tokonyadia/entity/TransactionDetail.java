@@ -18,12 +18,16 @@ public class TransactionDetail {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "transaction_id",nullable = false)
-    private String transactionId;
 
-    @Column(name = "product_id", nullable = false)
-    private String productId;
 
     @Column(name = "product_price", nullable = false)
     private Long productPrice;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "transaction_id", nullable = false, referencedColumnName = "id")
+    private Transaction transaction;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "prodcut_id", nullable = false, referencedColumnName = "id")
+    private Product product;
 }
