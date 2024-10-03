@@ -2,11 +2,13 @@ package git.darul.tokonyadia.controller;
 
 
 import git.darul.tokonyadia.constant.Constant;
-import git.darul.tokonyadia.entity.Store;
+import git.darul.tokonyadia.dto.request.StoreRequest;
+import git.darul.tokonyadia.dto.response.StoreResponse;
 import git.darul.tokonyadia.service.StoreService;
+import git.darul.tokonyadia.util.ResponseUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(Constant.STORE_API)
@@ -19,28 +21,59 @@ public class StoreController {
     }
 
     @GetMapping
-    public List<Store> getAllStores() {
-        return storeService.getAll();
+    public ResponseEntity<?> getAllStores() {
+        return ResponseUtil.buildResponseEntity(HttpStatus.OK,
+                "Succesfully get all data store",
+                storeService.getAll());
     }
 
     @GetMapping("/{id}")
-    public Store getStoreById(@PathVariable String id) {
-        return storeService.getById(id);
+    public ResponseEntity<?> getStoreById(@PathVariable String id) {
+        StoreResponse store = storeService.getById(id);
+        if (store == null) {
+            return ResponseUtil.buildResponseEntity(HttpStatus.BAD_REQUEST,
+                    "Id not found",
+                    store);
+        }
+        return ResponseUtil.buildResponseEntity(HttpStatus.OK,
+                 "Succesfully get data store",
+                 store);
     }
 
     @PostMapping
-    public Store createStore(@RequestBody Store store) {
-        return storeService.create(store);
+    public ResponseEntity<?> createStore(@RequestBody StoreRequest request) {
+        try {
+            StoreResponse storeResponse = storeService.create(request);
+            return ResponseUtil.buildResponseEntity(HttpStatus.CREATED, "Successfully created a new store", storeResponse);
+        } catch (Exception e) {
+            return ResponseUtil.buildResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage(), null);
+        }
     }
 
     @PutMapping("/{id}")
-    public Store updateStore(@PathVariable String id, @RequestBody Store store) {
-        return storeService.update(id, store);
+    public ResponseEntity<?> updateStore(@PathVariable String id, @RequestBody StoreRequest request) {
+        StoreResponse storeResult = storeService.update(id, request);
+        if (storeResult == null) {
+            return ResponseUtil.buildResponseEntity(HttpStatus.BAD_REQUEST,
+                    "Id not found",
+                    null);
+        }
+        return ResponseUtil.buildResponseEntity(HttpStatus.OK,
+                "Succesfully update data store",
+                storeResult);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteStore(@PathVariable String id) {
-        return storeService.delete(id);
+    public ResponseEntity<?> deleteStore(@PathVariable String id) {
+        return  storeService.delete(id) ?
+                ResponseUtil.buildResponseEntity(
+                        HttpStatus.OK,
+                        "Succesfully Delete Store",
+                        null
+                ) : ResponseUtil.buildResponseEntity(
+                HttpStatus.BAD_REQUEST,
+                "Id Store not found",
+                null) ;
     }
 
 }
