@@ -1,10 +1,13 @@
 package git.darul.tokonyadia.controller;
 
 import git.darul.tokonyadia.constant.Constant;
-import git.darul.tokonyadia.entity.Customer;
+import git.darul.tokonyadia.dto.request.CustomerRequest;
+import git.darul.tokonyadia.dto.response.CustomerResponse;
 import git.darul.tokonyadia.service.CustomerService;
+import git.darul.tokonyadia.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.PathMatcher;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,37 +17,45 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
-    private final PathMatcher mvcPathMatcher;
+
 
     @Autowired
-    public CustomerController(CustomerService customerService, PathMatcher mvcPathMatcher) {
+    public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
-        this.mvcPathMatcher = mvcPathMatcher;
     }
 
     @PostMapping
-    public Customer createCustomer(@RequestBody Customer customer) {
-        return customerService.create(customer);
+    public ResponseEntity<?> createCustomer(@RequestBody CustomerRequest request) {
+        CustomerResponse customerResponse = customerService.create(request);
+        return ResponseUtil.buildResponseEntity(HttpStatus.CREATED, "Succesfully Create Data", customerResponse);
     }
 
     @GetMapping
-    public List<Customer> getAllCustomers() {
-        return customerService.getAll();
+    public ResponseEntity<?> getAllCustomers() {
+        List<CustomerResponse> customerResponses = customerService.getAll();
+        return ResponseUtil.buildResponseEntity(HttpStatus.OK, "Succesfully Get All Data", customerResponses);
     }
 
     @GetMapping("/{id}")
-    public Customer getCustomerById(@PathVariable String id) {
-        return customerService.getById(id);
+    public ResponseEntity<?> getCustomerById(@PathVariable String id) {
+        CustomerResponse customer = customerService.getById(id);
+        return ResponseUtil.buildResponseEntity(HttpStatus.OK, "Succesfully Get Data", customer);
     }
 
     @PutMapping("/{id}")
-    public Customer updateCustomer(@PathVariable String id , @RequestBody Customer customer) {
-        return customerService.update(id, customer);
+    public ResponseEntity<?> updateCustomer(@PathVariable String id , @RequestBody CustomerRequest request) {
+        CustomerResponse resultCustomer = customerService.update(id, request);
+        return  (resultCustomer != null) ?
+                ResponseUtil.buildResponseEntity(HttpStatus.OK, "Succesfully Update Data", resultCustomer) :
+                ResponseUtil.buildResponseEntity(HttpStatus.BAD_REQUEST, "Id not found", resultCustomer);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteCustomer(@PathVariable String id) {
-        return customerService.delete(id);
+    public ResponseEntity<?> deleteCustomer(@PathVariable String id) {
+        return customerService.delete(id) ?
+                ResponseUtil.buildResponseEntity(HttpStatus.OK, "Succesfully delete data", null) :
+                ResponseUtil.buildResponseEntity(HttpStatus.BAD_REQUEST, "id not found", null);
+
     }
 
 

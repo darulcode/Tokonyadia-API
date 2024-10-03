@@ -4,9 +4,6 @@ package git.darul.tokonyadia.controller;
 import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.entity.Store;
 import git.darul.tokonyadia.service.StoreService;
-import jakarta.persistence.Entity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

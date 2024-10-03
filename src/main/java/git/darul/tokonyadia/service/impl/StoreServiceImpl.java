@@ -3,10 +3,12 @@ package git.darul.tokonyadia.service.impl;
 import git.darul.tokonyadia.entity.Store;
 import git.darul.tokonyadia.repository.StoreRepository;
 import git.darul.tokonyadia.service.StoreService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class StoreServiceImpl implements StoreService {
     
     private final StoreRepository storeRepository;

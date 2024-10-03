@@ -1,13 +1,15 @@
 package git.darul.tokonyadia.service;
 
+import git.darul.tokonyadia.dto.request.CustomerRequest;
+import git.darul.tokonyadia.dto.response.CustomerResponse;
 import git.darul.tokonyadia.entity.Customer;
 
 import java.util.List;
 
 public interface CustomerService {
-    Customer create(Customer customer);
-    List<Customer> getAll();
-    Customer getById(String id);
-    Customer update(String id, Customer customer);
-    String delete(String id);
+    CustomerResponse create(CustomerRequest request);
+    List<CustomerResponse> getAll();
+    CustomerResponse getById(String id);
+    CustomerResponse update(String id, CustomerRequest request);
+    Boolean delete(String id);
 }
