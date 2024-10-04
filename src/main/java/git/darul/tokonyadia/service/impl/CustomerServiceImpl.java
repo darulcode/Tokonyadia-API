@@ -1,16 +1,22 @@
 package git.darul.tokonyadia.service.impl;
 
 import git.darul.tokonyadia.dto.request.CustomerRequest;
+import git.darul.tokonyadia.dto.request.SearchCustomerRequest;
 import git.darul.tokonyadia.dto.response.CustomerResponse;
 import git.darul.tokonyadia.entity.Customer;
 import git.darul.tokonyadia.repository.CustomerRepository;
 import git.darul.tokonyadia.service.CustomerService;
+import git.darul.tokonyadia.spesification.CustomerSpesification;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 @AllArgsConstructor
@@ -32,13 +38,17 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public List<CustomerResponse> getAll() {
-        List<Customer> customersResult = customerRepository.findAll();
-        List<CustomerResponse> customerResponses = new ArrayList<>();
-        for (Customer customer : customersResult) {
-            customerResponses.add(getCustomerResponse(customer));
-        }
-        return customerResponses;
+    public Page<CustomerResponse> getAll(SearchCustomerRequest request) {
+        if (request.getPage() <= 0) request.setPage(1);
+        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize());
+        Specification<Customer> customerSpecification = CustomerSpesification.spesificationCustomer(request);
+        Page<Customer> customers = customerRepository.findAll(customerSpecification, pageable);
+        return customers.map(new Function<Customer, CustomerResponse>() {
+            @Override
+            public CustomerResponse apply(Customer customer) {
+                return getCustomerResponse(customer);
+            }
+        });
     }
 
     @Override

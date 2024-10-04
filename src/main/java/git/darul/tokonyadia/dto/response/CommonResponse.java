@@ -12,4 +12,5 @@ public class CommonResponse<T> {
     private Integer Status;
     private String Message;
     private T data;
+    private PagingResponse paging;
 }

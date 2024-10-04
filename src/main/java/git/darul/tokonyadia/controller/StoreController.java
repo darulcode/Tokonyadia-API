@@ -22,7 +22,7 @@ public class StoreController {
 
     @GetMapping
     public ResponseEntity<?> getAllStores() {
-        return ResponseUtil.buildResponseEntity(HttpStatus.OK,
+        return ResponseUtil.buildResponse(HttpStatus.OK,
                 "Succesfully get all data store",
                 storeService.getAll());
     }
@@ -31,11 +31,11 @@ public class StoreController {
     public ResponseEntity<?> getStoreById(@PathVariable String id) {
         StoreResponse store = storeService.getById(id);
         if (store == null) {
-            return ResponseUtil.buildResponseEntity(HttpStatus.BAD_REQUEST,
+            return ResponseUtil.buildResponse(HttpStatus.BAD_REQUEST,
                     "Id not found",
                     store);
         }
-        return ResponseUtil.buildResponseEntity(HttpStatus.OK,
+        return ResponseUtil.buildResponse(HttpStatus.OK,
                  "Succesfully get data store",
                  store);
     }
@@ -44,9 +44,9 @@ public class StoreController {
     public ResponseEntity<?> createStore(@RequestBody StoreRequest request) {
         try {
             StoreResponse storeResponse = storeService.create(request);
-            return ResponseUtil.buildResponseEntity(HttpStatus.CREATED, "Successfully created a new store", storeResponse);
+            return ResponseUtil.buildResponse(HttpStatus.CREATED, "Successfully created a new store", storeResponse);
         } catch (Exception e) {
-            return ResponseUtil.buildResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage(), null);
+            return ResponseUtil.buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), null);
         }
     }
 
@@ -54,11 +54,11 @@ public class StoreController {
     public ResponseEntity<?> updateStore(@PathVariable String id, @RequestBody StoreRequest request) {
         StoreResponse storeResult = storeService.update(id, request);
         if (storeResult == null) {
-            return ResponseUtil.buildResponseEntity(HttpStatus.BAD_REQUEST,
+            return ResponseUtil.buildResponse(HttpStatus.BAD_REQUEST,
                     "Id not found",
                     null);
         }
-        return ResponseUtil.buildResponseEntity(HttpStatus.OK,
+        return ResponseUtil.buildResponse(HttpStatus.OK,
                 "Succesfully update data store",
                 storeResult);
     }
@@ -66,11 +66,11 @@ public class StoreController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteStore(@PathVariable String id) {
         return  storeService.delete(id) ?
-                ResponseUtil.buildResponseEntity(
+                ResponseUtil.buildResponse(
                         HttpStatus.OK,
                         "Succesfully Delete Store",
                         null
-                ) : ResponseUtil.buildResponseEntity(
+                ) : ResponseUtil.buildResponse(
                 HttpStatus.BAD_REQUEST,
                 "Id Store not found",
                 null) ;

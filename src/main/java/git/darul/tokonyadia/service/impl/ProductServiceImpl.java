@@ -1,17 +1,25 @@
 package git.darul.tokonyadia.service.impl;
 
 import git.darul.tokonyadia.dto.request.ProductRequest;
+import git.darul.tokonyadia.dto.request.SearchProductRequest;
 import git.darul.tokonyadia.dto.response.ProductResponse;
+import git.darul.tokonyadia.entity.Customer;
 import git.darul.tokonyadia.entity.Product;
 import git.darul.tokonyadia.repository.ProductRepository;
 import git.darul.tokonyadia.service.ProductService;
+import git.darul.tokonyadia.spesification.ProductSpesification;
 import git.darul.tokonyadia.util.ResponseUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -56,11 +64,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponse> getAllProducts() {
-        List<Product> listProduct = productRepository.findAll();
-        List<ProductResponse> productResponseList = new ArrayList<>();
-        listProduct.forEach(product -> productResponseList.add(getProductResponse(product)));
-        return productResponseList;
+    public Page<ProductResponse> getAllProducts(SearchProductRequest request) {
+        if (request.getPage() <= 0) request.setPage(1);
+        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize());
+
+        Specification<Product> productSpecification = ProductSpesification.menuSpecifiation(request);
+        Page<Product> product = productRepository.findAll(productSpecification, pageable);
+        return product.map(new Function<Product, ProductResponse>() {
+            @Override
+            public ProductResponse apply(Product product) {
+                return getProductResponse(product);
+            }
+        });
     }
 
     public ProductResponse getProductResponse(Product product) {
