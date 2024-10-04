@@ -1,5 +1,6 @@
 package git.darul.tokonyadia.service.impl;
 
+import git.darul.tokonyadia.dto.request.SearchStoreRequest;
 import git.darul.tokonyadia.dto.request.StoreRequest;
 import git.darul.tokonyadia.dto.response.CustomerResponse;
 import git.darul.tokonyadia.dto.response.StoreResponse;
@@ -7,11 +8,18 @@ import git.darul.tokonyadia.entity.Customer;
 import git.darul.tokonyadia.entity.Store;
 import git.darul.tokonyadia.repository.StoreRepository;
 import git.darul.tokonyadia.service.StoreService;
+import git.darul.tokonyadia.spesification.CustomerSpesification;
+import git.darul.tokonyadia.spesification.StoreSpesification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 public class StoreServiceImpl implements StoreService {
@@ -35,11 +43,17 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public List<StoreResponse> getAll() {
-        List<Store> storesResult = storeRepository.findAll();
-        List<StoreResponse> storeResponses = new ArrayList<>();
-        storesResult.forEach(store -> storeResponses.add(getStoreResponse(store)));
-        return storeResponses;
+    public Page<StoreResponse> getAll(SearchStoreRequest request) {
+        if (request.getPage() <= 0) request.setPage(1);
+        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize());
+        Specification<Store> storeSpecification = StoreSpesification.spesificationStore(request);
+        Page<Store> storeResult = storeRepository.findAll(storeSpecification, pageable);
+        return storeResult.map(new Function<Store, StoreResponse>() {
+            @Override
+            public StoreResponse apply(Store store) {
+                return getStoreResponse(store);
+            }
+        });
     }
 
     @Override

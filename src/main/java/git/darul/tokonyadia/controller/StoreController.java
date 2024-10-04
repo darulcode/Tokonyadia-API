@@ -2,10 +2,13 @@ package git.darul.tokonyadia.controller;
 
 
 import git.darul.tokonyadia.constant.Constant;
+import git.darul.tokonyadia.dto.request.SearchCustomerRequest;
+import git.darul.tokonyadia.dto.request.SearchStoreRequest;
 import git.darul.tokonyadia.dto.request.StoreRequest;
 import git.darul.tokonyadia.dto.response.StoreResponse;
 import git.darul.tokonyadia.service.StoreService;
 import git.darul.tokonyadia.util.ResponseUtil;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +24,17 @@ public class StoreController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllStores() {
-        return ResponseUtil.buildResponse(HttpStatus.OK,
-                "Succesfully get all data store",
-                storeService.getAll());
+    public ResponseEntity<?> getAllStores(@RequestParam(name = "page",required = false, defaultValue = "1") Integer page,
+                                          @RequestParam(name = "size",required = false, defaultValue = "10") Integer size,
+                                          @RequestParam(name = "name", required = false) String name) {
+
+        SearchStoreRequest storeRequest = SearchStoreRequest.builder()
+                .name(name)
+                .page(page)
+                .size(size)
+                .build();
+        Page<StoreResponse> storeResult = storeService.getAll(storeRequest);
+        return ResponseUtil.buildResponsePaging(HttpStatus.OK, "Succesfuller Get Data Customer", storeResult);
     }
 
     @GetMapping("/{id}")

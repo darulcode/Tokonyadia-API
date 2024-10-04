@@ -41,7 +41,7 @@ public class CustomerController {
                 .size(size)
                 .build();
         Page<CustomerResponse> customerResponses = customerService.getAll(customerRequest);
-        return ResponseUtil.buildResponsePaging(HttpStatus.OK, "Succesfully Get All Data", customerResponses);
+        return ResponseUtil.buildResponsePaging(HttpStatus.OK, "Succesfully Get All Data Customer", customerResponses);
     }
 
     @GetMapping("/{id}")
