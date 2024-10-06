@@ -9,6 +9,7 @@ import git.darul.tokonyadia.repository.ProductRepository;
 import git.darul.tokonyadia.service.ProductService;
 import git.darul.tokonyadia.spesification.ProductSpesification;
 import git.darul.tokonyadia.util.ResponseUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -55,11 +56,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Boolean deleteProduct(String id) {
-        return null;
+        Optional<Product> productRepositoryById = productRepository.findById(id);
+        if (productRepositoryById.isPresent()) {
+            productRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public ProductResponse getProductById(String id) {
+        Optional<Product> productRepositoryById = productRepository.findById(id);
+        if (productRepositoryById.isPresent()) {
+            return getProductResponse(productRepositoryById.get());
+        }
         return null;
     }
 

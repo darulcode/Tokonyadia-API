@@ -42,13 +42,9 @@ public class CustomerServiceImpl implements CustomerService {
         if (request.getPage() <= 0) request.setPage(1);
         Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize());
         Specification<Customer> customerSpecification = CustomerSpesification.spesificationCustomer(request);
-        Page<Customer> customers = customerRepository.findAll(customerSpecification, pageable);
-        return customers.map(new Function<Customer, CustomerResponse>() {
-            @Override
-            public CustomerResponse apply(Customer customer) {
-                return getCustomerResponse(customer);
-            }
-        });
+        return  customerRepository.findAll(customerSpecification, pageable).map(
+                customer -> getCustomerResponse(customer)
+        );
     }
 
     @Override

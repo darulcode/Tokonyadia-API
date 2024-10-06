@@ -2,13 +2,10 @@ package git.darul.tokonyadia.service.impl;
 
 import git.darul.tokonyadia.dto.request.SearchStoreRequest;
 import git.darul.tokonyadia.dto.request.StoreRequest;
-import git.darul.tokonyadia.dto.response.CustomerResponse;
 import git.darul.tokonyadia.dto.response.StoreResponse;
-import git.darul.tokonyadia.entity.Customer;
 import git.darul.tokonyadia.entity.Store;
 import git.darul.tokonyadia.repository.StoreRepository;
 import git.darul.tokonyadia.service.StoreService;
-import git.darul.tokonyadia.spesification.CustomerSpesification;
 import git.darul.tokonyadia.spesification.StoreSpesification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -32,6 +27,10 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public StoreResponse create(StoreRequest request) {
+        System.out.println(request.getNoSiup());
+        System.out.println(request.getName());
+        System.out.println(request.getAddress());
+        System.out.println(request.getPhoneNumber());
         Store store = Store.builder()
                 .name(request.getName())
                 .noSiup(request.getNoSiup())

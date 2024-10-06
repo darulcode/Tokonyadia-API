@@ -2,11 +2,9 @@ package git.darul.tokonyadia.entity;
 
 import git.darul.tokonyadia.constant.Constant;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -18,6 +16,12 @@ public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Column(name = "product_id",insertable = false, updatable = false)
+    private String productId;
+
+    @Column(name = "store_id", insertable = false, updatable = false)
+    private String storeId;
 
     @Column(name = "stock")
     private Integer stock = 0;

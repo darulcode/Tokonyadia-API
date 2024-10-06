@@ -2,7 +2,6 @@ package git.darul.tokonyadia.controller;
 
 
 import git.darul.tokonyadia.constant.Constant;
-import git.darul.tokonyadia.dto.request.SearchCustomerRequest;
 import git.darul.tokonyadia.dto.request.SearchStoreRequest;
 import git.darul.tokonyadia.dto.request.StoreRequest;
 import git.darul.tokonyadia.dto.response.StoreResponse;
@@ -61,7 +60,7 @@ public class StoreController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateStore(@PathVariable String id, @RequestBody StoreRequest request) {
+    public ResponseEntity<?> updateStore(@PathVariable String id, StoreRequest request) {
         StoreResponse storeResult = storeService.update(id, request);
         if (storeResult == null) {
             return ResponseUtil.buildResponse(HttpStatus.BAD_REQUEST,

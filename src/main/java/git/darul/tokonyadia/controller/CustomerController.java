@@ -51,7 +51,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable String id , @RequestBody CustomerRequest request) {
+    public ResponseEntity<?> updateCustomer(@PathVariable String id ,@RequestBody CustomerRequest request) {
         CustomerResponse resultCustomer = customerService.update(id, request);
         return  (resultCustomer != null) ?
                 ResponseUtil.buildResponse(HttpStatus.OK, "Succesfully Update Data", resultCustomer) :
