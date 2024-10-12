@@ -88,6 +88,12 @@ public class ProductServiceImpl implements ProductService {
         });
     }
 
+    @Override
+    public Product getOne(String id) {
+        Optional<Product> product = productRepository.findById(id);
+        return product.orElse(null);
+    }
+
     public ProductResponse getProductResponse(Product product) {
         return ProductResponse.builder()
                 .id(product.getId())
