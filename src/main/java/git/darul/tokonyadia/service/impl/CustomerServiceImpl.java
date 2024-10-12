@@ -4,15 +4,19 @@ import git.darul.tokonyadia.dto.request.CustomerRequest;
 import git.darul.tokonyadia.dto.request.SearchCustomerRequest;
 import git.darul.tokonyadia.dto.response.CustomerResponse;
 import git.darul.tokonyadia.entity.Customer;
+import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.repository.CustomerRepository;
 import git.darul.tokonyadia.service.CustomerService;
+import git.darul.tokonyadia.service.UserService;
 import git.darul.tokonyadia.spesification.CustomerSpesification;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,14 +27,18 @@ import java.util.function.Function;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final UserService userService;
 
     @Override
     public CustomerResponse create(CustomerRequest request) {
+
+        UserAccount userAccount = userService.register(request);
         Customer customer = Customer.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .address(request.getAddress())
                 .phoneNumber(request.getPhoneNumber())
+                .userAccount(userAccount)
                 .build();
         Customer customerResult = customerRepository.saveAndFlush(customer);
         return getCustomerResponse(customerResult);
@@ -49,9 +57,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerResponse getById(String id) {
-        Optional<Customer> customer = customerRepository.findById(id);
-        Customer resultCustomer = customer.isPresent() ? customer.get() : null;
-        return getCustomerResponse(resultCustomer);
+        Customer customer = getOne(id);
+        return getCustomerResponse(customer);
     }
 
     @Override
@@ -68,12 +75,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Boolean delete(String id) {
-        Optional<Customer> customer = customerRepository.findById(id);
-        if (customer.isEmpty()) {
-            return false;
-        }
-        customerRepository.deleteById(id);
+        customerRepository.delete(getOne(id));
         return true;
+    }
+
+    @Override
+    public Customer getOne(String id) {
+        Optional<Customer> customer = customerRepository.findById(id);
+        if (customer.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        return customer.get();
     }
 
     private CustomerResponse getCustomerResponse(Customer customer) {

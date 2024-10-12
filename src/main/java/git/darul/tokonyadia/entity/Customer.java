@@ -33,6 +33,10 @@ public class Customer {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @OneToOne
+    @JoinColumn(name = "user_account")
+    private UserAccount userAccount;
+
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Transaction> transactions;
 
