@@ -63,6 +63,12 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    public Store getOne(String id) {
+        Optional<Store> resultStore = storeRepository.findById(id);
+        return resultStore.orElse(null);
+    }
+
+    @Override
     public StoreResponse update(String id, StoreRequest request) {
         Optional<Store> storeResult = storeRepository.findById(id);
         if (storeResult.isEmpty()) {return null;}

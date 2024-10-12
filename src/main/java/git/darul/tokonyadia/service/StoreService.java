@@ -14,6 +14,7 @@ public interface StoreService {
     StoreResponse create(StoreRequest request);
     Page<StoreResponse> getAll(SearchStoreRequest request);
     StoreResponse getById(String id);
+    Store getOne(String id);
     StoreResponse update(String id, StoreRequest request);
     Boolean delete(String id);
 }

@@ -54,7 +54,6 @@ public class StockServiceImpl implements StockService {
         });
     }
 
-
     @Override
     public StockResponse createStock(StockRequest request) {
         if (request.getProductId() == null || request.getStoreId() == null) {
