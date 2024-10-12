@@ -10,7 +10,11 @@ public class Constant {
     public static final String PRODUCT_API = "/api/product";
     public static final String TABLE_STOCK = "t_stock";
     public static final String STOCK_API = "/api/stock";
+    public static final String ORDER_API = "/api/order";
     public static final String TABLE_TRANSACTION = "t_transaction";
     public static final String TABLE_TRANSACTION_DETAIL = "t_transaction_detail";
+    public static final String USER_ACCOUNT_TABLE = "m_user";
+
+    public static final String AUTH_API = "/api/auth";
 
 }
