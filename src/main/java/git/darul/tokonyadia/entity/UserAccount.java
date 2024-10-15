@@ -36,6 +36,9 @@ public class UserAccount implements UserDetails {
     @Column(name = "user_type")
     private UserType userType;
 
+    // Relasi One-to-Many dengan UserShipping
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    private List<UserShipping> userShipping;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
