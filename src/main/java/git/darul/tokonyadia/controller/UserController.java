@@ -39,4 +39,11 @@ public class UserController {
         return ResponseUtil.buildResponsePage(HttpStatus.OK, "Success fetch all users", allUser);
     }
 
+    @PostMapping("/update")
+    public ResponseEntity<?> update(@RequestBody UserRequest request) {
+        UserResponse user = userService.updateUser(request);
+        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully updated user", user);
+    }
+
+
 }

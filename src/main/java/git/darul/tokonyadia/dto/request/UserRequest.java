@@ -1,7 +1,6 @@
 package git.darul.tokonyadia.dto.request;
 
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 @Setter
 @Getter

@@ -1,7 +1,6 @@
 package git.darul.tokonyadia.service.impl;
 
 import git.darul.tokonyadia.constant.UserType;
-import git.darul.tokonyadia.dto.request.PagingAndShortingRequest;
 import git.darul.tokonyadia.dto.request.UserRequest;
 import git.darul.tokonyadia.dto.request.UserSearchRequest;
 import git.darul.tokonyadia.dto.response.UserResponse;
@@ -11,7 +10,6 @@ import git.darul.tokonyadia.repository.UserRepository;
 import git.darul.tokonyadia.service.UserAccountService;
 import git.darul.tokonyadia.service.UserService;
 import git.darul.tokonyadia.spesification.UserSpecification;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -75,9 +73,17 @@ public class UserServiceImpl implements UserService {
         });
     }
 
+
     @Override
     public UserResponse updateUser(UserRequest userRequest) {
-        return  null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserAccount userAccount = (UserAccount) authentication.getPrincipal();
+        User user = userRepository.findByUserAccount(userAccount);
+        user.setName(userRequest.getName());
+        user.setEmail(userRequest.getEmail());
+        user.setPhoneNumber(userRequest.getPhoneNumber());
+        User userResult = userRepository.save(user);
+        return getUserResponse(userResult);
     }
 
     @Override
