@@ -11,8 +11,7 @@ import git.darul.tokonyadia.repository.CategoryRepository;
 import git.darul.tokonyadia.service.CategoryService;
 import git.darul.tokonyadia.util.AuthenticationContextUtil;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,11 +25,11 @@ import java.util.Optional;
 import java.util.function.Function;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
-    private static final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
     private final CategoryRepository categoryRepository;
 
     @Override

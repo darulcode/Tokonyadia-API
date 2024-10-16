@@ -20,6 +20,8 @@ public class Constant {
     public static final String USER_BALANCE_API="/api/balance";
     public static final String CATEGORY_API="/api/category";
     public static final String PRODUCT_API="/api/product";
+    public static final String PRODUCT_SIZE_API="/api/product/size";
+    public static final String CART_API="/api/cart";
 
 
 

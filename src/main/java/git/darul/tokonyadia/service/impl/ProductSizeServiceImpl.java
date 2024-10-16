@@ -1,6 +1,7 @@
 package git.darul.tokonyadia.service.impl;
 
 import git.darul.tokonyadia.dto.request.ProductRequest;
+import git.darul.tokonyadia.dto.request.ProductSizeRequest;
 import git.darul.tokonyadia.dto.response.ProductSizeResponse;
 import git.darul.tokonyadia.entity.Product;
 import git.darul.tokonyadia.entity.ProductSize;
@@ -72,6 +73,17 @@ public class ProductSizeServiceImpl implements ProductSizeService {
     public void deleteProductSize(String id) {
         productSizeRepository.findById(id).ifPresentOrElse(
                 productSizeRepository::delete,
+                () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Size ID not found"); }
+        );
+    }
+
+    @Override
+    public void updateByid(ProductSizeRequest request) {
+        productSizeRepository.findById(request.getId()).ifPresentOrElse(
+                productSize -> {
+                    productSize.setSize(request.getSize());
+                    productSizeRepository.save(productSize);
+                },
                 () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Size ID not found"); }
         );
     }

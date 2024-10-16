@@ -13,4 +13,5 @@ public interface ProductService {
     void deleteProduct(String id);
     Page<ProductResponse> getAllProducts(ProductSearchRequest request);
     Product getOne(String id);
+    void addStock(String id, Integer quantity);
 }

@@ -1,5 +1,6 @@
 package git.darul.tokonyadia.entity;
 
+import git.darul.tokonyadia.constant.CartStatus;
 import git.darul.tokonyadia.constant.Constant;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "quantity", nullable = false, columnDefinition = "int check (quantity > 0)")
+    @Column(name = "quantity", nullable = false, columnDefinition = "int check (quantity >= 0)")
     private Integer quantity;
 
     @Column(name = "size", nullable = false, length = 10)
@@ -30,5 +31,9 @@ public class Cart {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product", nullable = false)
     private Product product;
+
+    @Column(name = "cart_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CartStatus cartStatus;
 
 }

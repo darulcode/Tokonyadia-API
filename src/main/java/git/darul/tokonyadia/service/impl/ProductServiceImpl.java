@@ -128,6 +128,13 @@ public class ProductServiceImpl implements ProductService {
         return product.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
     }
 
+    @Override
+    public void addStock(String id, Integer quantity) {
+        Product product = getOne(id);
+        product.setStock(quantity);
+        productRepository.save(product);
+    }
+
     private ProductResponse getProductResponse(Product product, List<ProductSizeResponse> productSize) {
         return ProductResponse.builder()
                 .id(product.getId())

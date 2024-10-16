@@ -1,6 +1,5 @@
 package git.darul.tokonyadia.dto.request;
 
-
 import lombok.*;
 
 @Setter
@@ -8,7 +7,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductSizeRequest {
+public class CartRequest {
     private String id;
+    private Integer quantity;
     private String size;
+    private String userAccountId;
+    private String productId;
 }
