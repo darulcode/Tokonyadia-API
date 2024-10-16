@@ -4,7 +4,6 @@ import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.request.CategoryRequest;
 import git.darul.tokonyadia.dto.request.PagingAndShortingRequest;
 import git.darul.tokonyadia.dto.response.CategoryResponse;
-import git.darul.tokonyadia.dto.response.PagingResponse;
 import git.darul.tokonyadia.service.CategoryService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;

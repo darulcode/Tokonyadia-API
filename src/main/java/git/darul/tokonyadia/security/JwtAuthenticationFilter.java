@@ -1,10 +1,8 @@
 package git.darul.tokonyadia.security;
 
-import git.darul.tokonyadia.entity.User;
 import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.service.JwtService;
 import git.darul.tokonyadia.service.UserAccountService;
-import git.darul.tokonyadia.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
