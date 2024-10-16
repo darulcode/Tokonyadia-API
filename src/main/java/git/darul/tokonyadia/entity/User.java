@@ -2,7 +2,6 @@ package git.darul.tokonyadia.entity;
 
 
 import git.darul.tokonyadia.constant.Constant;
-import git.darul.tokonyadia.constant.UserType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +28,6 @@ public class User {
     private String phoneNumber;
 
     @OneToOne
-    @JoinColumn(name = "m_user_account")
+    @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 }

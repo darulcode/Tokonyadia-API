@@ -21,6 +21,6 @@ public class UserBalance {
     private Long balance;
 
     @OneToOne
-    @JoinColumn(name = "m_user_account")
+    @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 }

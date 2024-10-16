@@ -36,17 +36,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
-            // TODO: Verikasi token yang dibawa oleh client/error
+            // Verikasi token yang dibawa oleh client/error
             String header = request.getHeader(HttpHeaders.AUTHORIZATION);
             String token = parseToken(header);
 
-            //TODO: Ambil id
+            // Ambil id
             String userId = jwtService.getUserIdFromToken(token);
 
-            // TODO: get Useraccount by id
+            // get Useraccount by id
             UserAccount user = userService.getOne(userId);
 
-            //TODO: set authentication ke securityContextHolder
+            //set authentication ke securityContextHolder
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     user, null, user.getAuthorities()
             );
