@@ -23,7 +23,6 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class ProductSizeServiceImpl implements ProductSizeService {
     private final ProductSizeRepository productSizeRepository;
-    private final ProductRepository productRepository;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
