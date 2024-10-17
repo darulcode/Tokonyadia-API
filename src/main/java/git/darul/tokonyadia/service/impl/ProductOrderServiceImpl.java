@@ -5,7 +5,6 @@ import git.darul.tokonyadia.dto.response.ProductOrderResponse;
 import git.darul.tokonyadia.entity.Order;
 import git.darul.tokonyadia.entity.Product;
 import git.darul.tokonyadia.entity.ProductOrder;
-import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.repository.ProductOrderRepository;
 import git.darul.tokonyadia.service.ProductOrderService;
 import git.darul.tokonyadia.service.ProductService;
@@ -49,12 +48,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             productService.addStock(product.getId(), product.getStock() - request.getQuantity());
         });
         List<ProductOrder> productOrderResult = productOrderRepository.saveAll(productOrders);
-        return productOrderResult.stream().map(new Function<ProductOrder, ProductOrderResponse>() {
-            @Override
-            public ProductOrderResponse apply(ProductOrder productOrder) {
-                return getProductOrderResponse(productOrder);
-            }
-        }).toList();
+        return productOrderResult.stream()
+                .map(this::getProductOrderResponse)
+                .toList();
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -64,12 +60,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         if (productOrder.isEmpty()) {
             return new ArrayList<>();
         }
-        return productOrder.stream().map(new Function<ProductOrder, ProductOrderResponse>() {
-            @Override
-            public ProductOrderResponse apply(ProductOrder productOrder) {
-                return getProductOrderResponse(productOrder);
-            }
-        }).toList();
+        return productOrder.stream().map(this::getProductOrderResponse).toList();
     }
 
     @Transactional(rollbackFor = Exception.class)

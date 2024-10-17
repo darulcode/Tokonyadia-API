@@ -1,6 +1,5 @@
 package git.darul.tokonyadia.service.impl;
 
-import git.darul.tokonyadia.dto.request.PagingAndShortingRequest;
 import git.darul.tokonyadia.dto.request.UserShippingRequest;
 import git.darul.tokonyadia.dto.response.UserShippingResponse;
 import git.darul.tokonyadia.entity.UserAccount;
@@ -64,12 +63,7 @@ public class UserShippingServiceImpl implements UserShippingService {
         Pageable pageable = PageRequest.of(0, 10);
 
         Page<UserShipping> userShippingList = userShippingRepository.findAllByUserAccount(userAccount,pageable);
-        return userShippingList.map(new Function<UserShipping, UserShippingResponse>() {
-            @Override
-            public UserShippingResponse apply(UserShipping userShipping) {
-                return getUserShippingResponse(userShipping);
-            }
-        });
+        return userShippingList.map(this::getUserShippingResponse);
     }
 
     @Override
@@ -92,6 +86,7 @@ public class UserShippingServiceImpl implements UserShippingService {
     public void delete(String id) {
         UserShipping userShipping = getOne(id);
         UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
+        if (currentUser != null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         if (!userShipping.getUserAccount().getId().equals(currentUser.getId())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }

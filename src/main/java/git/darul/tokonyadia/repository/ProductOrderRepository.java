@@ -1,6 +1,5 @@
 package git.darul.tokonyadia.repository;
 
-import git.darul.tokonyadia.dto.response.ProductOrderResponse;
 import git.darul.tokonyadia.entity.Order;
 import git.darul.tokonyadia.entity.ProductOrder;
 import org.springframework.data.jpa.repository.JpaRepository;

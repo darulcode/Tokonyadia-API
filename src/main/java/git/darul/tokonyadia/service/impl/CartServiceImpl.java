@@ -45,7 +45,7 @@ public class CartServiceImpl implements CartService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough stock");
         }
         List<ProductSizeResponse> productSizes = productSizeService.getProductSizeByProduct(product);
-        Boolean sizeExists = productSizes.stream()
+        boolean sizeExists = productSizes.stream()
                 .anyMatch(ps -> ps.getSize().equals(cartRequest.getSize()));
         if (!sizeExists) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Size not found");
@@ -68,7 +68,8 @@ public class CartServiceImpl implements CartService {
         cartRepository.findById(id).ifPresentOrElse(
                 cart -> {
                     UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
-                    if (!currentUser.getId().equals(cart.getUserAccount().getId()) || currentUser == null) {
+                    if (currentUser == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+                    if (!currentUser.getId().equals(cart.getUserAccount().getId())) {
                         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
                     }
                     cart.setCartStatus(CartStatus.INACTIVE);
@@ -89,7 +90,7 @@ public class CartServiceImpl implements CartService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
         Page<Cart> cartList = cartRepository.findByUserAccountAndCartStatus(currentUser, CartStatus.ACTIVE, pageable);
-        return cartList.map(cart -> getCartResponse(cart));
+        return cartList.map(this::getCartResponse);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -98,7 +99,8 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepository.findById(cartRequest.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found"));
         Product product = productService.getOne(cart.getProduct().getId());
         UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
-        if (!currentUser.getId().equals(cart.getUserAccount().getId()) || currentUser == null) {
+        if (currentUser == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        if (!currentUser.getId().equals(cart.getUserAccount().getId()) ) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
         log.info("stok + quantity : {}", product.getStock() + cart.getQuantity());

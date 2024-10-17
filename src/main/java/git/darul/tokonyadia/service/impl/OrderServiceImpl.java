@@ -13,7 +13,6 @@ import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.repository.OrderRepository;
 import git.darul.tokonyadia.service.OrderService;
 import git.darul.tokonyadia.service.ProductOrderService;
-import git.darul.tokonyadia.service.ProductService;
 import git.darul.tokonyadia.service.ShippingOrderService;
 import git.darul.tokonyadia.util.AuthenticationContextUtil;
 import git.darul.tokonyadia.util.ShortUtil;
@@ -69,13 +68,10 @@ public class OrderServiceImpl implements OrderService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
         Page<Order> orderResult = orderRepository.findAll(pageable);
-        return orderResult.map(new Function<Order, OrderResponse>() {
-            @Override
-            public OrderResponse apply(Order order) {
-                ShippingOrderResponse shippingOrderResponse = shippingOrderService.findByOrder(order);
-                List<ProductOrderResponse> productOrderResponses = productOrderService.findAllByOrder(order);
-                return getOrderResponse(order, productOrderResponses, shippingOrderResponse);
-            }
+        return orderResult.map(order -> {
+            ShippingOrderResponse shippingOrderResponse = shippingOrderService.findByOrder(order);
+            List<ProductOrderResponse> productOrderResponses = productOrderService.findAllByOrder(order);
+            return getOrderResponse(order, productOrderResponses, shippingOrderResponse);
         });
     }
 

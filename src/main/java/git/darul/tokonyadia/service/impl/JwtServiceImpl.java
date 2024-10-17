@@ -30,8 +30,6 @@ public class JwtServiceImpl implements JwtService {
 
     private final RedisService redisService;
 
-    private final RedisTemplate<String, Object> redisTemplate;
-
     @Value("${tokonyadia.jwt-secret}")
     private String SECRET_KEY;
 
