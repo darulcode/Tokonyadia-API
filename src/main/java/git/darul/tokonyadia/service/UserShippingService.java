@@ -12,4 +12,5 @@ public interface UserShippingService {
     Page<UserShippingResponse> getAllUserShipping();
     UserShipping getOne(String id);
     UserShippingResponse getById(String id);
+    void delete(String id);
 }

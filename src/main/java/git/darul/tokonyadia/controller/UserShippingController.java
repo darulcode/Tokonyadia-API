@@ -41,4 +41,10 @@ public class UserShippingController {
         UserShippingResponse userShippingResponse = userShippingService.getById(id);
         return ResponseUtil.buildResponse(HttpStatus.OK, "Succesfully retrieved user shipping", userShippingResponse);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUserShipping(@PathVariable String id) {
+        userShippingService.delete(id);
+        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully deleted shipping address", null);
+    }
 }

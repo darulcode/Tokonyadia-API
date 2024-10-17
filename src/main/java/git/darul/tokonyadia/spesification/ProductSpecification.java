@@ -17,7 +17,7 @@ public class ProductSpecification {
     public static Specification<Product> getSpecification(ProductSearchRequest request, Boolean active) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            log.info("Memasuki spesification");
+            log.info("Create product Specification");
             if (StringUtils.hasText(request.getQuery())) {
                 Predicate queryPredicate =  criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + request.getQuery() + "%");
                 predicates.add(queryPredicate);

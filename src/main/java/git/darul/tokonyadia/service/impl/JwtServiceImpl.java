@@ -8,6 +8,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.service.JwtService;
+import git.darul.tokonyadia.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,13 +18,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
+
+    private final RedisService redisService;
 
     private final RedisTemplate<String, Object> redisTemplate;
 
@@ -33,9 +38,7 @@ public class JwtServiceImpl implements JwtService {
     @Value("${tokonyadia.jwt-expiration-in-minutes}")
     private Long EXPIRATION_TIME_TOKEN;
 
-    // TODO: refresh token
-//    @Value("${warung.makan.bahari.jwt-expiration-in-hour-refresh-token}")
-//    private Long EXPIRATION_TIME_REFRESH_TOKEN;
+    private final String BLACKLISTED = "BLACKLISTED";
 
     @Value("${tokonyadia.jwt-issuer}")
     private String ISSUER;
@@ -97,6 +100,34 @@ public class JwtServiceImpl implements JwtService {
             log.error("Error while validate JWT Token: {}", exception.getMessage());
             return null;
         }
+    }
 
+    @Override
+    public void blacklistAccessToken(String bearerToken) {
+        String token = parseToken(bearerToken);
+
+        DecodedJWT decodedJWT = extractClaimJWT(token);
+
+        if (decodedJWT == null) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Token invalid");
+        }
+
+        Date expiresAt = decodedJWT.getExpiresAt();
+        long timeLeft = (expiresAt.getTime() - System.currentTimeMillis());
+
+        redisService.save(token, BLACKLISTED, Duration.ofMillis(timeLeft));
+    }
+
+    @Override
+    public boolean isTokenBlacklisted(String token) {
+        String blacklistToken = redisService.get(token);
+        return blacklistToken != null && blacklistToken.equals(BLACKLISTED);
+    }
+
+    private String parseToken(String bearerToken) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }

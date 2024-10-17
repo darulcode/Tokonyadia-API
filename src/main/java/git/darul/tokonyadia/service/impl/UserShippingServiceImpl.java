@@ -7,6 +7,7 @@ import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.entity.UserShipping;
 import git.darul.tokonyadia.repository.UserShippingRepository;
 import git.darul.tokonyadia.service.UserShippingService;
+import git.darul.tokonyadia.util.AuthenticationContextUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -85,6 +86,16 @@ public class UserShippingServiceImpl implements UserShippingService {
         UserShipping userShipping = getOne(id);
         if (!userAccount.getId().equals(userShipping.getUserAccount().getId()))  throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         return getUserShippingResponse(userShipping);
+    }
+
+    @Override
+    public void delete(String id) {
+        UserShipping userShipping = getOne(id);
+        UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
+        if (!userShipping.getUserAccount().getId().equals(currentUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        }
+        userShippingRepository.delete(userShipping);
     }
 
     private UserShippingResponse getUserShippingResponse(UserShipping userShipping) {

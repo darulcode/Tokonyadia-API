@@ -36,8 +36,11 @@ public class UserAccount implements UserDetails {
     @Column(name = "user_type")
     private UserType userType;
 
-    @OneToMany(mappedBy = "userAccount")
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
     private List<Cart> cart;
+
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    private List<Order> orders;
 
     // Relasi One-to-Many dengan UserShipping
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)

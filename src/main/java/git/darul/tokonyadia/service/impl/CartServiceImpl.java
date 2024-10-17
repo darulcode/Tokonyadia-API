@@ -59,7 +59,6 @@ public class CartServiceImpl implements CartService {
                 .build();
 
         cartRepository.saveAndFlush(cart);
-        productService.addStock(product.getId(), cartRequest.getQuantity());
         return getCartResponse(cart);
     }
 
@@ -72,8 +71,6 @@ public class CartServiceImpl implements CartService {
                     if (!currentUser.getId().equals(cart.getUserAccount().getId()) || currentUser == null) {
                         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
                     }
-                    Product product = productService.getOne(cart.getProduct().getId());
-                    productService.addStock(product.getId(), product.getStock() + cart.getQuantity());
                     cart.setCartStatus(CartStatus.INACTIVE);
                     cart.setQuantity(0);
                     cartRepository.save(cart);
@@ -91,7 +88,7 @@ public class CartServiceImpl implements CartService {
         if (currentUser == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
-        Page<Cart> cartList = cartRepository.findByUserAccount(currentUser, pageable);
+        Page<Cart> cartList = cartRepository.findByUserAccountAndCartStatus(currentUser, CartStatus.ACTIVE, pageable);
         return cartList.map(cart -> getCartResponse(cart));
     }
 
@@ -106,11 +103,10 @@ public class CartServiceImpl implements CartService {
         }
         log.info("stok + quantity : {}", product.getStock() + cart.getQuantity());
         log.info("stok  : {}", product.getStock() );
-        if (product.getStock() + cart.getQuantity() < cartRequest.getQuantity()) {
+        if (product.getStock() < cartRequest.getQuantity()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough stock");
         }
         log.info("update stok :{}", (cart.getQuantity() + product.getStock()) - cartRequest.getQuantity());
-        productService.addStock(product.getId(), (cart.getQuantity() + product.getStock()) - cartRequest.getQuantity());
         cart.setQuantity(cartRequest.getQuantity());
         cartRepository.saveAndFlush(cart);
         return getCartResponse(cart);
