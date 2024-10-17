@@ -60,22 +60,6 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public Boolean validateToken(String token) {
-        log.info("Validating JWT Token :{}", token);
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer(ISSUER)
-                    .build();
-            verifier.verify(token);
-            return true;
-        } catch (JWTVerificationException e) {
-            log.error("Error while validate JWT Token : {}", e.getMessage());
-            return false;
-        }
-    }
-
-    @Override
     public String getUserIdFromToken(String token) {
         DecodedJWT decodedJWT = extractClaimJWT(token);
         if (decodedJWT != null) {
