@@ -32,8 +32,8 @@ public class ProductController {
     @PreAuthorize("hasRole('SELLER')")
     @PutMapping
     public ResponseEntity<?> updateProduct(@RequestBody ProductRequest productRequest) {
-        productService.updateProduct(productRequest);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully updated product", productRequest);
+        ProductResponse productResponse = productService.updateProduct(productRequest);
+        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully updated product", productResponse);
     }
 
     @PreAuthorize("hasRole('SELLER')")
@@ -63,5 +63,12 @@ public class ProductController {
                 .build();
         Page<ProductResponse> allProducts = productService.getAllProducts(productSearchRequest);
         return ResponseUtil.buildResponsePage(HttpStatus.OK, "Succesfully fetch all product", allProducts);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProduct(@PathVariable String id) {
+        log.info("Get product");
+        ProductResponse product = productService.getProductById(id);
+        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully fetched product", product);
     }
 }

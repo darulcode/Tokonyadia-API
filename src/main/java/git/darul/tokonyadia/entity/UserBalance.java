@@ -17,7 +17,7 @@ public class UserBalance {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false, name = "balance", columnDefinition = "bigint check (balance > 0)")
+    @Column(nullable = false, name = "balance", columnDefinition = "bigint check (balance >= 0)")
     private Long balance;
 
     @OneToOne

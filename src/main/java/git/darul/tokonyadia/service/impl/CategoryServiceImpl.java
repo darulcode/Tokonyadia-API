@@ -103,7 +103,10 @@ public class CategoryServiceImpl implements CategoryService {
         return categories.map(new Function<Category, CategoryResponse>() {
             @Override
             public CategoryResponse apply(Category category) {
-                return CategoryResponse.builder().id(category.getId()).name(category.getName()).statusCategory(category.getStatus().getDescription()).build();
+                return CategoryResponse.builder().id(category.getId())
+                        .name(category.getName())
+                        .statusCategory(category.getStatus()
+                        .getDescription()).build();
             }
         });
     }
@@ -114,7 +117,7 @@ public class CategoryServiceImpl implements CategoryService {
         return CategoryResponse.builder()
                 .id(category.getId())
                 .name(category.getName())
-                .statusCategory(category.getStatus().name())
+                .statusCategory(category.getStatus().getDescription())
                 .build();
     }
 }

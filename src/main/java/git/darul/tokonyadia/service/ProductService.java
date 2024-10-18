@@ -14,4 +14,5 @@ public interface ProductService {
     Page<ProductResponse> getAllProducts(ProductSearchRequest request);
     Product getOne(String id);
     void addStock(String id, Integer quantity);
+    ProductResponse getProductById(String id);
 }

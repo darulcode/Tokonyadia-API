@@ -5,6 +5,7 @@ import git.darul.tokonyadia.constant.StatusOrder;
 import git.darul.tokonyadia.constant.UserType;
 import git.darul.tokonyadia.dto.request.OrderRequest;
 import git.darul.tokonyadia.dto.request.PagingAndShortingRequest;
+import git.darul.tokonyadia.dto.request.UpdateOrderRequest;
 import git.darul.tokonyadia.dto.response.OrderResponse;
 import git.darul.tokonyadia.dto.response.ProductOrderResponse;
 import git.darul.tokonyadia.dto.response.ShippingOrderResponse;
@@ -88,6 +89,22 @@ public class OrderServiceImpl implements OrderService {
         ShippingOrderResponse shippingOrderResponse = shippingOrderService.findByOrder(order);
         List<ProductOrderResponse> productOrderResponses = productOrderService.findAllByOrder(order);
         return getOrderResponse(order, productOrderResponses, shippingOrderResponse);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateOrderStatus(UpdateOrderRequest request) {
+        Order order = getOne(request.getId());
+        if (order.getStatus().equals(StatusOrder.PENDING)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order not paid");
+        }
+        order.setStatus(StatusOrder.fromDescription(request.getStatus()));
+        orderRepository.save(order);
+    }
+
+    @Override
+    public Order getOne(String id) {
+        return orderRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
     }
 
     private OrderResponse getOrderResponse(Order order,List<ProductOrderResponse> productOrderResponse, ShippingOrderResponse shippingOrderResponse) {

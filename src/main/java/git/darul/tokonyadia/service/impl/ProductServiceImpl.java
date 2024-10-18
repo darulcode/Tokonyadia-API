@@ -113,13 +113,17 @@ public class ProductServiceImpl implements ProductService {
             }
         }
         Page<Product> productAll = productRepository.findAll(specification, pageable);
-        return productAll.map(new Function<Product, ProductResponse>() {
-            @Override
-            public ProductResponse apply(Product product) {
-                List<ProductSizeResponse> productSizeByProductId = productSizeService.getProductSizeByProduct(product);
-                return getProductResponse(product, productSizeByProductId);
-            }
+        return productAll.map(product -> {
+            List<ProductSizeResponse> productSizeByProductId = productSizeService.getProductSizeByProduct(product);
+            return getProductResponse(product, productSizeByProductId);
         });
+//        return productAll.map(new Function<Product, ProductResponse>() {
+//            @Override
+//            public ProductResponse apply(Product product) {
+//                List<ProductSizeResponse> productSizeByProductId = productSizeService.getProductSizeByProduct(product);
+//                return getProductResponse(product, productSizeByProductId);
+//            }
+//        });
     }
 
     @Override
@@ -133,6 +137,13 @@ public class ProductServiceImpl implements ProductService {
         Product product = getOne(id);
         product.setStock(quantity);
         productRepository.save(product);
+    }
+
+    @Override
+    public ProductResponse getProductById(String id) {
+        Product product = getOne(id);
+        List<ProductSizeResponse> productSizeByProduct = productSizeService.getProductSizeByProduct(product);
+        return getProductResponse(product, productSizeByProduct);
     }
 
     private ProductResponse getProductResponse(Product product, List<ProductSizeResponse> productSize) {

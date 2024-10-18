@@ -10,6 +10,7 @@ import git.darul.tokonyadia.repository.UserRepository;
 import git.darul.tokonyadia.service.UserAccountService;
 import git.darul.tokonyadia.service.UserService;
 import git.darul.tokonyadia.spesification.UserSpecification;
+import git.darul.tokonyadia.util.AuthenticationContextUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserAccountService userAccountService;
-    private final PasswordEncoder passwordEncoder;
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -65,20 +65,16 @@ public class UserServiceImpl implements UserService {
 
         Specification<User> userSpecification = UserSpecification.specificationUser(request);
         Page<User> userResult = userRepository.findAll(userSpecification, pageable);
-        return userResult.map(new Function<User, UserResponse>() {
-            @Override
-            public UserResponse apply(User user) {
-                return getUserResponse(user);
-            }
-        });
+        return userResult.map(this::getUserResponse);
     }
 
 
     @Override
     public UserResponse updateUser(UserRequest userRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserAccount userAccount = (UserAccount) authentication.getPrincipal();
-        User user = userRepository.findByUserAccount(userAccount);
+        UserAccount userAccount = AuthenticationContextUtil.getCurrentUser();
+        log.info("user id :{}", userAccount.getId());
+        User user = userRepository.findByUserAccountId(userAccount.getId());
+        log.info("user id :{}", user.getId());
         user.setName(userRequest.getName());
         user.setEmail(userRequest.getEmail());
         user.setPhoneNumber(userRequest.getPhoneNumber());
