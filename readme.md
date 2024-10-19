@@ -1,7 +1,7 @@
 
 # Tokonyadia
 
-Proyek ini adalah aplikasi e-commerce yang dikembangkan sebagai tugas di tempat pelatihan. Aplikasi ini memungkinkan pengguna untuk melakukan pembelian produk dengan fitur autentikasi pengguna, manajemen token, dan lainnya.
+Proyek ini adalah aplikasi e-commerce yang dikembangkan sebagai tugas ebigmacamp. Aplikasi ini memungkinkan pengguna untuk melakukan pembelian produk dengan fitur autentikasi pengguna, manajemen token, dan lainnya.
 
 ## Fitur Utama
 
@@ -47,8 +47,7 @@ Untuk menjalankan proyek ini, ikuti langkah-langkah berikut:
    ```
 
 2. **Setup PostgreSQL**:
-    - Buat database baru dengan nama `tokonyadia`.
-    - Jalankan skrip SQL yang diperlukan untuk membuat tabel.
+    - Buat database baru dengan nama `tokonyadia`(opsional).
 
 3. **Setup Redis**:
     - Pastikan Redis sudah terinstall dan berjalan di lokal.
@@ -61,7 +60,7 @@ Untuk menjalankan proyek ini, ikuti langkah-langkah berikut:
 4. **Setup Midtrans**:
     - Daftar dan buat akun di [Midtrans](https://midtrans.com).
     - Buat proyek baru di dashboard Midtrans untuk mendapatkan `Client Key` dan `Server Key`.
-    - Konfigurasikan `Client Key` dan `Server Key` di file konfigurasi aplikasi (biasanya di `application.properties` atau `application.yml`).
+    - Konfigurasikan `Client Key` dan `Server Key` di file konfigurasi aplikasi  di `application.properties` .
       ```properties
       midtrans.server.key=YOUR_SECRET_KEY
       ```
