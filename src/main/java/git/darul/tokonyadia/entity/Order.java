@@ -1,6 +1,7 @@
 package git.darul.tokonyadia.entity;
 
 import git.darul.tokonyadia.constant.Constant;
+import git.darul.tokonyadia.constant.PaymentMethod;
 import git.darul.tokonyadia.constant.ShippingMethod;
 import git.darul.tokonyadia.constant.StatusOrder;
 import jakarta.persistence.*;
@@ -36,6 +37,10 @@ public class Order {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "shipping_method")
     private ShippingMethod shippingMethod;
+
+    @Column(name = "payment_method", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "status")

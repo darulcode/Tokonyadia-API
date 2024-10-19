@@ -7,6 +7,7 @@ import git.darul.tokonyadia.dto.request.UpdateOrderRequest;
 import git.darul.tokonyadia.dto.response.OrderResponse;
 import git.darul.tokonyadia.service.OrderService;
 import git.darul.tokonyadia.util.ResponseUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,11 +23,14 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
     private final OrderService orderService;
 
+    @Operation(summary = "Create Order")
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderRequest) {
         OrderResponse orderResponse = orderService.createOrder(orderRequest);
         return ResponseUtil.buildResponse(HttpStatus.CREATED, "Succesfully created Order", orderResponse);
     }
+
+    @Operation(summary = "Get All Orders")
     @GetMapping
     public ResponseEntity<?> getAllOrders(
             @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
@@ -42,12 +46,14 @@ public class OrderController {
         return ResponseUtil.buildResponsePage(HttpStatus.OK, "Successfully fetch all orders", ordersResult);
     }
 
+    @Operation(summary = "Get Order By Id")
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@PathVariable String id) {
         OrderResponse orderResponse = orderService.getById(id);
         return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully fetched Order", orderResponse);
     }
 
+    @Operation(summary = "Update Status Order")
     @PreAuthorize("hasRole('SELLER')")
     @PutMapping
     public ResponseEntity<?> updateOrder(@RequestBody UpdateOrderRequest request) {

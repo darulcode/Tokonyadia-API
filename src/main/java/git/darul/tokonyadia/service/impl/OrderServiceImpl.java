@@ -1,24 +1,16 @@
 package git.darul.tokonyadia.service.impl;
 
-import git.darul.tokonyadia.constant.PaymentStatus;
-import git.darul.tokonyadia.constant.ShippingMethod;
-import git.darul.tokonyadia.constant.StatusOrder;
-import git.darul.tokonyadia.constant.UserType;
-import git.darul.tokonyadia.dto.request.MidtransNotificationRequest;
-import git.darul.tokonyadia.dto.request.OrderRequest;
-import git.darul.tokonyadia.dto.request.PagingAndShortingRequest;
-import git.darul.tokonyadia.dto.request.UpdateOrderRequest;
+import git.darul.tokonyadia.constant.*;
+import git.darul.tokonyadia.dto.request.*;
 import git.darul.tokonyadia.dto.response.MidtransResponse;
 import git.darul.tokonyadia.dto.response.OrderResponse;
 import git.darul.tokonyadia.dto.response.ProductOrderResponse;
 import git.darul.tokonyadia.dto.response.ShippingOrderResponse;
 import git.darul.tokonyadia.entity.Order;
+import git.darul.tokonyadia.entity.Product;
 import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.repository.OrderRepository;
-import git.darul.tokonyadia.service.OrderService;
-import git.darul.tokonyadia.service.PaymentService;
-import git.darul.tokonyadia.service.ProductOrderService;
-import git.darul.tokonyadia.service.ShippingOrderService;
+import git.darul.tokonyadia.service.*;
 import git.darul.tokonyadia.util.AuthenticationContextUtil;
 import git.darul.tokonyadia.util.ShortUtil;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +34,8 @@ public class OrderServiceImpl implements OrderService {
     private final ProductOrderService productOrderService;
     private final ShippingOrderService shippingOrderService;
     private final PaymentService paymentService;
+    private final UserBalanceService userBalanceService;
+    private final ProductService productService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -55,10 +49,23 @@ public class OrderServiceImpl implements OrderService {
                 .userAccount(currentUser)
                 .status(StatusOrder.PENDING)
                 .shippingMethod(ShippingMethod.fromDescription(orderRequest.getShippingMethod()))
+                .paymentMethod(PaymentMethod.MIDTRANS)
                 .build();
         Order orderResult = orderRepository.saveAndFlush(order);
         List<ProductOrderResponse> productOrderResponses = productOrderService.createAll(orderRequest.getProductDetails(), orderResult);
         ShippingOrderResponse shippingOrderResponse = shippingOrderService.create(orderRequest.getUserShippingId(), orderResult);
+        if (orderRequest.getPaymentMethod().equals(PaymentMethod.BALANCE.getDescription())) {
+            Long totalAmount = 0L;
+            for (ProductOrderRequest productDetail : orderRequest.getProductDetails()) {
+                Long productPrice = productService.getOne(productDetail.getProductId()).getPrice();
+                totalAmount += productPrice * productDetail.getQuantity();
+            }
+            orderResult.setStatus(StatusOrder.PROCESS);
+            orderResult.setPaymentMethod(PaymentMethod.BALANCE);
+            orderRepository.save(orderResult);
+            userBalanceService.updateBalanceWhileOrder(totalAmount,currentUser);
+            return getOrderResponse(orderResult, productOrderResponses, shippingOrderResponse, MidtransResponse.builder().redirectUrl(null).build());
+        }
         MidtransResponse midtransResponse = paymentService.cratePayment(orderRequest.getProductDetails(), orderResult);
         return getOrderResponse(orderResult, productOrderResponses, shippingOrderResponse, midtransResponse);
     }
@@ -73,12 +80,23 @@ public class OrderServiceImpl implements OrderService {
         if (currentUser == null ) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
-        Page<Order> orderResult = orderRepository.findAll(pageable);
+        Page<Order> orderResult;
+        if (currentUser.getUserType().equals(UserType.ROLE_BUYER)){
+            orderResult = orderRepository.findAllByUserAccount(currentUser, pageable);
+        } else {
+            orderResult = orderRepository.findAll(pageable);
+        }
         return orderResult.map(order -> {
             ShippingOrderResponse shippingOrderResponse = shippingOrderService.findByOrder(order);
             List<ProductOrderResponse> productOrderResponses = productOrderService.findAllByOrder(order);
-            MidtransResponse paymentResponse = paymentService.findPaymentByOrderId(order.getId());
-            return getOrderResponse(order, productOrderResponses, shippingOrderResponse, paymentResponse);
+            log.info("order id : {}",order.getId());
+            MidtransResponse paymentResponse;
+            if (order.getPaymentMethod().equals(PaymentMethod.BALANCE)) {
+                paymentResponse = MidtransResponse.builder().redirectUrl(null).build();
+            } else {
+                paymentResponse = paymentService.findPaymentByOrderId(order.getId());
+            }
+            return getOrderResponse(order, productOrderResponses, shippingOrderResponse,  paymentResponse);
         });
     }
 
@@ -142,6 +160,7 @@ public class OrderServiceImpl implements OrderService {
                 .productDetails(productOrderResponse)
                 .status(order.getStatus().getDescription())
                 .redirectUrl(midtransResponse.getRedirectUrl())
+                .paymentMethod(order.getPaymentMethod().getDescription())
                 .build();
     }
 }

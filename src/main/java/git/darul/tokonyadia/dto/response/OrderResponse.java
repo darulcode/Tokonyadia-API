@@ -19,4 +19,5 @@ public class OrderResponse {
     private List<ProductOrderResponse> productDetails;
     private String status;
     private String redirectUrl;
+    private String paymentMethod;
 }

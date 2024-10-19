@@ -4,6 +4,7 @@ import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.request.MidtransNotificationRequest;
 import git.darul.tokonyadia.service.OrderService;
 import git.darul.tokonyadia.util.ResponseUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class PaymentController {
 
     private final OrderService orderService;
 
+    @Operation(summary = "Handle Notification By Midtrans to Server")
     @PostMapping(path = "/notifications")
     public ResponseEntity<?> handleNotification(@RequestBody Map<String, String> request) {
         MidtransNotificationRequest midtransNotificationRequest = MidtransNotificationRequest.builder()

@@ -34,6 +34,8 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/category").permitAll()
                                 .requestMatchers("/api/category/**").permitAll()
                                 .requestMatchers("/api/payments/notifications").permitAll()
+                                .requestMatchers("/").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/api/product").permitAll()
                                 .anyRequest().authenticated()
                 )

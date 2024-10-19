@@ -13,4 +13,5 @@ public class OrderRequest {
     private String shippingMethod;
     private String userShippingId;
     private List<ProductOrderRequest> productDetails;
+    private String paymentMethod;
 }

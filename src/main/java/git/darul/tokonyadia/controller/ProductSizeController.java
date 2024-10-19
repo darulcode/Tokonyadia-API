@@ -4,6 +4,7 @@ import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.request.ProductSizeRequest;
 import git.darul.tokonyadia.service.ProductSizeService;
 import git.darul.tokonyadia.util.ResponseUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ public class ProductSizeController {
 
     private final ProductSizeService productSizeService;
 
+    @Operation(summary = "Pelete Product Size")
     @PreAuthorize("hasRole('SELLER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProductSize(@PathVariable(name = "id") String id) {
@@ -27,6 +29,7 @@ public class ProductSizeController {
         return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully delete size", null);
     }
 
+    @Operation(summary = "Update Product")
     @PreAuthorize("hasRole('SELLER')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProductSize(@PathVariable(name = "id") String id, @RequestBody ProductSizeRequest request) {

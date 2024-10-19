@@ -6,6 +6,7 @@ import git.darul.tokonyadia.dto.request.UserSearchRequest;
 import git.darul.tokonyadia.dto.response.UserResponse;
 import git.darul.tokonyadia.service.UserService;
 import git.darul.tokonyadia.util.ResponseUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
+    @Operation(summary = "Register Customer")
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequest request) {
         UserResponse user = userService.createUser(request);
@@ -39,6 +41,7 @@ public class UserController {
         return ResponseUtil.buildResponsePage(HttpStatus.OK, "Success fetch all users", allUser);
     }
 
+    @Operation(summary = "update Customer")
     @PostMapping("/update")
     public ResponseEntity<?> update(@RequestBody UserRequest request) {
         UserResponse user = userService.updateUser(request);

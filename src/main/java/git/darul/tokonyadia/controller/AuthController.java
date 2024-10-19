@@ -5,6 +5,7 @@ import git.darul.tokonyadia.dto.request.AuthRequest;
 import git.darul.tokonyadia.dto.response.AuthResponse;
 import git.darul.tokonyadia.service.AuthService;
 import git.darul.tokonyadia.util.ResponseUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,6 +32,7 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @Operation(summary = "Log in")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
         AuthResponse login = authService.login(authRequest);
@@ -38,6 +40,7 @@ public class AuthController {
         return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully logged in", login);
     }
 
+    @Operation(summary = "Refresh Token")
     @PostMapping(path = "/refresh-token")
     public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = getRefreshTokenFromCookie(request);
@@ -46,6 +49,7 @@ public class AuthController {
         return ResponseUtil.buildResponse(HttpStatus.OK, "OK", authResponse);
     }
 
+    @Operation(summary = "Log out")
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);

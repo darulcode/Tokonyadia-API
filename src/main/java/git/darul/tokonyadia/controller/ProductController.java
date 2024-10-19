@@ -6,6 +6,7 @@ import git.darul.tokonyadia.dto.request.ProductSearchRequest;
 import git.darul.tokonyadia.dto.response.ProductResponse;
 import git.darul.tokonyadia.service.ProductService;
 import git.darul.tokonyadia.util.ResponseUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ public class ProductController {
 
     private final ProductService productService;
 
+    @Operation(summary = "Create Product")
     @PreAuthorize("hasRole('SELLER')")
     @PostMapping
     public ResponseEntity<?> createProduct(@RequestBody ProductRequest productRequest) {
@@ -29,6 +31,7 @@ public class ProductController {
         return ResponseUtil.buildResponse(HttpStatus.CREATED, "Successfully created product", product);
     }
 
+    @Operation(summary = "Update Product")
     @PreAuthorize("hasRole('SELLER')")
     @PutMapping
     public ResponseEntity<?> updateProduct(@RequestBody ProductRequest productRequest) {
@@ -36,6 +39,7 @@ public class ProductController {
         return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully updated product", productResponse);
     }
 
+    @Operation(summary = "Delete Product By Id")
     @PreAuthorize("hasRole('SELLER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable String id) {
@@ -43,6 +47,8 @@ public class ProductController {
         return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully deleted product", id);
     }
 
+
+    @Operation(summary = "Get All product ")
     @GetMapping
     public ResponseEntity<?> getAllProducts(
             @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
@@ -65,6 +71,7 @@ public class ProductController {
         return ResponseUtil.buildResponsePage(HttpStatus.OK, "Succesfully fetch all product", allProducts);
     }
 
+    @Operation(summary = "Get Product By Id")
     @GetMapping("/{id}")
     public ResponseEntity<?> getProduct(@PathVariable String id) {
         log.info("Get product");

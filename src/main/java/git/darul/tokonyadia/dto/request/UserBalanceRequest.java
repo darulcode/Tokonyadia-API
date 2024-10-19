@@ -9,5 +9,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @Builder
 public class UserBalanceRequest {
+    private String userId;
     private Long amount;
 }
