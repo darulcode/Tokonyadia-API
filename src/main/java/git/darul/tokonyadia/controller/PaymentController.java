@@ -3,7 +3,6 @@ package git.darul.tokonyadia.controller;
 import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.request.MidtransNotificationRequest;
 import git.darul.tokonyadia.service.OrderService;
-import git.darul.tokonyadia.service.PaymentService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
