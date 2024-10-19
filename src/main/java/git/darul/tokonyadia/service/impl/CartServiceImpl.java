@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -43,6 +44,16 @@ public class CartServiceImpl implements CartService {
         Product product = productService.getOne(cartRequest.getProductId());
         if (product.getStock() < cartRequest.getQuantity()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough stock");
+        }
+        Optional<Cart> cartResult = cartRepository.findByUserAccountAndProduct(currentUser, product);
+        if (cartResult.isPresent()) {
+            Integer quantity = cartResult.get().getQuantity();
+            Integer requestQuantity = cartRequest.getQuantity();
+            Integer quantityResult = quantity + requestQuantity;
+            cartResult.get().setQuantity(quantityResult);
+            if (product.getStock() < quantityResult) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough stock");
+            cartRepository.save(cartResult.get());
+            return getCartResponse(cartResult.get());
         }
         List<ProductSizeResponse> productSizes = productSizeService.getProductSizeByProduct(product);
         boolean sizeExists = productSizes.stream()
@@ -94,6 +105,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+
     @Override
     public CartResponse updateCart(CartRequest cartRequest) {
         Cart cart = cartRepository.findById(cartRequest.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found"));

@@ -33,6 +33,7 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/auth/login").permitAll()
                                 .requestMatchers("/api/category").permitAll()
                                 .requestMatchers("/api/category/**").permitAll()
+                                .requestMatchers("/api/payments/notifications").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/api/product").permitAll()
                                 .anyRequest().authenticated()
                 )

@@ -13,6 +13,7 @@ public class Constant {
     public static final String ORDER_TABLE="t_order";
     public static final String PRODUCT_ORDER_DETAIL_TABLE="t_product_order_detail";
     public static final String SHIPPING_ORDER_DETAIL_TABLE="t_shipping_order_detail";
+    public static final String PAYMENT_TABLE="t_payment";
 
 
     public static final String PRODUCT_TABLE="m_product";
@@ -28,6 +29,7 @@ public class Constant {
     public static final String PRODUCT_SIZE_API="/api/product/size";
     public static final String CART_API="/api/cart";
     public static final String ORDER_API="/api/order";
+    public static final String MIDTRANS_NOTIFICATION_API="/api/payments";
 
 
 

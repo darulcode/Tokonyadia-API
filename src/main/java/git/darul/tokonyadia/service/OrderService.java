@@ -1,5 +1,6 @@
 package git.darul.tokonyadia.service;
 
+import git.darul.tokonyadia.dto.request.MidtransNotificationRequest;
 import git.darul.tokonyadia.dto.request.OrderRequest;
 import git.darul.tokonyadia.dto.request.PagingAndShortingRequest;
 import git.darul.tokonyadia.dto.request.UpdateOrderRequest;
@@ -13,4 +14,5 @@ public interface OrderService {
     OrderResponse getById(String id);
     void updateOrderStatus(UpdateOrderRequest request);
     Order getOne(String id);
+    void getNotification(MidtransNotificationRequest request);
 }

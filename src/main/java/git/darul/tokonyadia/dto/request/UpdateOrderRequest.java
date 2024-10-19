@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class UpdateOrderRequest {
-    private String id;
+    private String orderId;
     private String status;
 }

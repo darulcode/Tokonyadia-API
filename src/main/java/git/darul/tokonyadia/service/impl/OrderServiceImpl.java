@@ -1,11 +1,14 @@
 package git.darul.tokonyadia.service.impl;
 
+import git.darul.tokonyadia.constant.PaymentStatus;
 import git.darul.tokonyadia.constant.ShippingMethod;
 import git.darul.tokonyadia.constant.StatusOrder;
 import git.darul.tokonyadia.constant.UserType;
+import git.darul.tokonyadia.dto.request.MidtransNotificationRequest;
 import git.darul.tokonyadia.dto.request.OrderRequest;
 import git.darul.tokonyadia.dto.request.PagingAndShortingRequest;
 import git.darul.tokonyadia.dto.request.UpdateOrderRequest;
+import git.darul.tokonyadia.dto.response.MidtransResponse;
 import git.darul.tokonyadia.dto.response.OrderResponse;
 import git.darul.tokonyadia.dto.response.ProductOrderResponse;
 import git.darul.tokonyadia.dto.response.ShippingOrderResponse;
@@ -13,6 +16,7 @@ import git.darul.tokonyadia.entity.Order;
 import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.repository.OrderRepository;
 import git.darul.tokonyadia.service.OrderService;
+import git.darul.tokonyadia.service.PaymentService;
 import git.darul.tokonyadia.service.ProductOrderService;
 import git.darul.tokonyadia.service.ShippingOrderService;
 import git.darul.tokonyadia.util.AuthenticationContextUtil;
@@ -37,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ProductOrderService productOrderService;
     private final ShippingOrderService shippingOrderService;
+    private final PaymentService paymentService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -54,7 +59,8 @@ public class OrderServiceImpl implements OrderService {
         Order orderResult = orderRepository.saveAndFlush(order);
         List<ProductOrderResponse> productOrderResponses = productOrderService.createAll(orderRequest.getProductDetails(), orderResult);
         ShippingOrderResponse shippingOrderResponse = shippingOrderService.create(orderRequest.getUserShippingId(), orderResult);
-        return getOrderResponse(orderResult, productOrderResponses, shippingOrderResponse);
+        MidtransResponse midtransResponse = paymentService.cratePayment(orderRequest.getProductDetails(), orderResult);
+        return getOrderResponse(orderResult, productOrderResponses, shippingOrderResponse, midtransResponse);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -71,7 +77,8 @@ public class OrderServiceImpl implements OrderService {
         return orderResult.map(order -> {
             ShippingOrderResponse shippingOrderResponse = shippingOrderService.findByOrder(order);
             List<ProductOrderResponse> productOrderResponses = productOrderService.findAllByOrder(order);
-            return getOrderResponse(order, productOrderResponses, shippingOrderResponse);
+            MidtransResponse paymentResponse = paymentService.findPaymentByOrderId(order.getId());
+            return getOrderResponse(order, productOrderResponses, shippingOrderResponse, paymentResponse);
         });
     }
 
@@ -88,13 +95,14 @@ public class OrderServiceImpl implements OrderService {
         }
         ShippingOrderResponse shippingOrderResponse = shippingOrderService.findByOrder(order);
         List<ProductOrderResponse> productOrderResponses = productOrderService.findAllByOrder(order);
-        return getOrderResponse(order, productOrderResponses, shippingOrderResponse);
+        MidtransResponse paymentResponse = paymentService.findPaymentByOrderId(order.getId());
+        return getOrderResponse(order, productOrderResponses, shippingOrderResponse, paymentResponse);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateOrderStatus(UpdateOrderRequest request) {
-        Order order = getOne(request.getId());
+        Order order = getOne(request.getOrderId());
         if (order.getStatus().equals(StatusOrder.PENDING)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order not paid");
         }
@@ -107,7 +115,24 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
     }
 
-    private OrderResponse getOrderResponse(Order order,List<ProductOrderResponse> productOrderResponse, ShippingOrderResponse shippingOrderResponse) {
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void getNotification(MidtransNotificationRequest request) {
+        Order order = getOne(request.getOrderId());
+        PaymentStatus paymentStatus = paymentService.getNotification(request);
+
+        if (paymentStatus != null && paymentStatus.equals(PaymentStatus.SETTLEMENT)) {
+            order.setStatus(StatusOrder.DELIVERY);
+        }
+
+        if (paymentStatus.equals(PaymentStatus.CANCEL) || paymentStatus.equals(PaymentStatus.EXPIRE) || paymentStatus.equals(PaymentStatus.DENY))  {
+            order.setStatus(StatusOrder.CANCEL);
+        }
+
+
+    }
+
+    private OrderResponse getOrderResponse(Order order,List<ProductOrderResponse> productOrderResponse, ShippingOrderResponse shippingOrderResponse, MidtransResponse midtransResponse) {
         return OrderResponse.builder()
                 .id(order.getId())
                 .userId(order.getUserAccount().getId())
@@ -116,6 +141,7 @@ public class OrderServiceImpl implements OrderService {
                 .shippingOrder(shippingOrderResponse)
                 .productDetails(productOrderResponse)
                 .status(order.getStatus().getDescription())
+                .redirectUrl(midtransResponse.getRedirectUrl())
                 .build();
     }
 }

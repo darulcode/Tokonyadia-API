@@ -18,4 +18,5 @@ public class OrderResponse {
     private ShippingOrderResponse shippingOrder;
     private List<ProductOrderResponse> productDetails;
     private String status;
+    private String redirectUrl;
 }

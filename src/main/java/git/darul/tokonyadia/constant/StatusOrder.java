@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum StatusOrder {
+    CANCEL("Gagal"),
     PENDING("Pembayaran"),
     PROCESS("Proses"),
     DELIVERY("Pengiriman"),

@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,4 +40,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "status")
     private StatusOrder status;
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    private List<ProductOrder> productOrders;
 }
