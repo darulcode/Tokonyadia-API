@@ -2,13 +2,11 @@ package git.darul.tokonyadia.service.impl;
 
 import git.darul.tokonyadia.dto.request.UserBalanceRequest;
 import git.darul.tokonyadia.dto.response.UserBalanceResponse;
-import git.darul.tokonyadia.entity.User;
 import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.entity.UserBalance;
 import git.darul.tokonyadia.repository.UserBalanceRepository;
 import git.darul.tokonyadia.service.UserAccountService;
 import git.darul.tokonyadia.service.UserBalanceService;
-import git.darul.tokonyadia.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

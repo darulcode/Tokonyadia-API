@@ -1,7 +1,5 @@
 package git.darul.tokonyadia.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import git.darul.tokonyadia.constant.UserType;
 import git.darul.tokonyadia.dto.request.AuthRequest;
 import git.darul.tokonyadia.dto.response.AuthResponse;
@@ -17,9 +15,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 class AuthServiceImplTest {

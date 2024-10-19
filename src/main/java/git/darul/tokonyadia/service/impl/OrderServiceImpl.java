@@ -7,7 +7,6 @@ import git.darul.tokonyadia.dto.response.OrderResponse;
 import git.darul.tokonyadia.dto.response.ProductOrderResponse;
 import git.darul.tokonyadia.dto.response.ShippingOrderResponse;
 import git.darul.tokonyadia.entity.Order;
-import git.darul.tokonyadia.entity.Product;
 import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.repository.OrderRepository;
 import git.darul.tokonyadia.service.*;
