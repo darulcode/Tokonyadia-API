@@ -37,7 +37,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
         AuthResponse login = authService.login(authRequest);
         setCookie(response, login.getRefreshToken());
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully logged in", login);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_LOGIN_MESSAGE, login);
     }
 
     @Operation(summary = "Refresh Token")
@@ -46,7 +46,7 @@ public class AuthController {
         String refreshToken = getRefreshTokenFromCookie(request);
         AuthResponse authResponse = authService.refreshToken(refreshToken);
         setCookie(response, authResponse.getRefreshToken());
-        return ResponseUtil.buildResponse(HttpStatus.OK, "OK", authResponse);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.OK, authResponse);
     }
 
     @Operation(summary = "Log out")
@@ -54,14 +54,14 @@ public class AuthController {
     public ResponseEntity<?> logout(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         authService.logout(bearerToken);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "OK", null);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.OK, null);
     }
 
     private String getRefreshTokenFromCookie(HttpServletRequest request) {
         Cookie cookie = Arrays.stream(request.getCookies())
                 .filter(c -> c.getName().equals(Constant.REFRESH_TOKEN_COOKIE_NAME))
                 .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh Token is required"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.REFRESH_TOKEN_REQUIRED_MESSAGE));
         return cookie.getValue();
     }
 

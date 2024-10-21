@@ -28,7 +28,7 @@ public class ProductSizeController {
     public ResponseEntity<?> deleteProductSize(@PathVariable(name = "id") String id) {
         log.info("Deleting product size {}", id);
         productSizeService.deleteProductSize(id);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully delete size", null);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_DELETE_SIZE_MESSAGE, null);
     }
 
     @Operation(summary = "Update Product")
@@ -38,7 +38,7 @@ public class ProductSizeController {
         request.setId(id);
         log.info("Updating product size {}", id);
         productSizeService.updateByid(request);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully update size", null);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_UPDATE_SIZE_MESSAGE, null);
     }
 
 }

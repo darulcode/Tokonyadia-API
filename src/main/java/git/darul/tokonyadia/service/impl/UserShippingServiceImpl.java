@@ -1,5 +1,6 @@
 package git.darul.tokonyadia.service.impl;
 
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.request.UserShippingRequest;
 import git.darul.tokonyadia.dto.response.UserShippingResponse;
 import git.darul.tokonyadia.entity.UserAccount;
@@ -45,7 +46,7 @@ public class UserShippingServiceImpl implements UserShippingService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserAccount userAccount = (UserAccount) authentication.getPrincipal();
         UserShipping userShipping = getOne(request.getId());
-        if (!userAccount.getId().equals(userShipping.getUserAccount().getId()))  throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        if (!userAccount.getId().equals(userShipping.getUserAccount().getId()))  throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         userShipping.setName(request.getName());
         userShipping.setAddress(request.getAddress());
         userShipping.setCity(request.getCity());
@@ -68,7 +69,7 @@ public class UserShippingServiceImpl implements UserShippingService {
     @Override
     public UserShipping getOne(String id) {
         Optional<UserShipping> userShipping = userShippingRepository.findById(id);
-        if (userShipping.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Shipping not found");
+        if (userShipping.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.USER_SHIPPING_NOT_FOUND);
         return userShipping.get();
     }
 
@@ -77,7 +78,7 @@ public class UserShippingServiceImpl implements UserShippingService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserAccount userAccount = (UserAccount) authentication.getPrincipal();
         UserShipping userShipping = getOne(id);
-        if (!userAccount.getId().equals(userShipping.getUserAccount().getId()))  throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        if (!userAccount.getId().equals(userShipping.getUserAccount().getId()))  throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         return getUserShippingResponse(userShipping);
     }
 

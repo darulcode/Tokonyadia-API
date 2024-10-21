@@ -1,6 +1,7 @@
 package git.darul.tokonyadia.service.impl;
 
 import git.darul.tokonyadia.constant.ConditionProduct;
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.constant.ProductStatus;
 import git.darul.tokonyadia.constant.UserType;
 import git.darul.tokonyadia.dto.request.ProductRequest;
@@ -50,11 +51,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse createProduct(ProductRequest request, List<MultipartFile> multipartFiles) {
         UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
-        if (currentUser == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
-        if (currentUser.getUserType().equals(UserType.ROLE_BUYER) ) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        if (currentUser == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
+        if (currentUser.getUserType().equals(UserType.ROLE_BUYER) ) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         Category category = categoryService.getOne(request.getCategoryId());
-        log.info("product condition :{}", request.getCondition());
-        log.info("product condition : {}", ConditionProduct.fromDescription(request.getCondition()));
         Product product = Product.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -74,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse updateProduct(ProductRequest request) {
         UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
-        if (currentUser.getUserType().equals(UserType.ROLE_BUYER)) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        if (currentUser.getUserType().equals(UserType.ROLE_BUYER)) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         Category category = categoryService.getOne(request.getCategoryId());
         Product product = getOne(request.getId());
         product.setName(request.getName());
@@ -123,19 +122,12 @@ public class ProductServiceImpl implements ProductService {
             List<ImageResponse> imageResponses = imageService.getImageByProduct(product);
             return getProductResponse(product, productSizeByProductId, imageResponses);
         });
-//        return productAll.map(new Function<Product, ProductResponse>() {
-//            @Override
-//            public ProductResponse apply(Product product) {
-//                List<ProductSizeResponse> productSizeByProductId = productSizeService.getProductSizeByProduct(product);
-//                return getProductResponse(product, productSizeByProductId);
-//            }
-//        });
     }
 
     @Override
     public Product getOne(String id) {
         Optional<Product> product = productRepository.findById(id);
-        return product.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+        return product.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.PRODUCT_NOTFOUND_MESSAGE));
     }
 
     @Override

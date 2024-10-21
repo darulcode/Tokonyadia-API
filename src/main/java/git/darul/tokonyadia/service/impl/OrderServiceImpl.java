@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse createOrder(OrderRequest orderRequest) {
         UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
         if (currentUser == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         }
 
         Order order = Order.builder()
@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
         Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sortBy);
         UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
         if (currentUser == null ) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         }
         Page<Order> orderResult;
         if (currentUser.getUserType().equals(UserType.ROLE_BUYER)){
@@ -104,11 +104,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse getById(String id) {
         UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
         if (currentUser == null ) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         }
-        Order order = orderRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.ORDER_NOT_FOUND));
         if (!order.getUserAccount().getId().equals(currentUser.getId()) && !currentUser.getUserType().equals(UserType.ROLE_SELLER)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         }
         ShippingOrderResponse shippingOrderResponse = shippingOrderService.findByOrder(order);
         List<ProductOrderResponse> productOrderResponses = productOrderService.findAllByOrder(order);
@@ -121,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
     public void updateOrderStatus(UpdateOrderRequest request) {
         Order order = getOne(request.getOrderId());
         if (order.getStatus().equals(StatusOrder.PENDING)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order not paid");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.ORDER_NOT_PAID);
         }
         order.setStatus(StatusOrder.fromDescription(request.getStatus()));
         orderRepository.save(order);
@@ -129,7 +129,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getOne(String id) {
-        return orderRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+        return orderRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.ORDER_NOT_FOUND));
     }
 
     @Transactional(rollbackFor = Exception.class)

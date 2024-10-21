@@ -1,5 +1,6 @@
 package git.darul.tokonyadia.service.impl;
 
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.constant.UserType;
 import git.darul.tokonyadia.dto.request.UserRequest;
 import git.darul.tokonyadia.dto.request.UserSearchRequest;
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
         UserAccount userAccount = (UserAccount) authentication.getPrincipal();
 
         if (userAccount.getUserType().equals(UserType.ROLE_BUYER))
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
 
         if (request.getPage() <= 0) request.setPage(1);
         Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize());
@@ -84,7 +85,7 @@ public class UserServiceImpl implements UserService {
     public User getOne(String id) {
         Optional<User> user = userRepository.findById(id);
         // TODO: Membenarkan pesan error dan error handling
-        if (user.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+        if (user.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.USER_NOT_FOUND);
         return user.get();
     }
 

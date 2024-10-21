@@ -39,7 +39,7 @@ public class ProductController {
         try {
             ProductRequest request = objectMapper.readValue(product, ProductRequest.class);
             ProductResponse productResult = productService.createProduct(request, multipartFiles);
-            return ResponseUtil.buildResponse(HttpStatus.CREATED, "Successfully created product", productResult);
+            return ResponseUtil.buildResponse(HttpStatus.CREATED, Constant.SUCCESS_CREATE_PRODUCT_MESSAGE, productResult);
         } catch (Exception e) {
             return ResponseUtil.buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), null);
         }
@@ -50,7 +50,7 @@ public class ProductController {
     @PutMapping
     public ResponseEntity<?> updateProduct(@RequestBody ProductRequest productRequest) {
         ProductResponse productResponse = productService.updateProduct(productRequest);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully updated product", productResponse);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_UPDATE_PRODUCT_MESSAGE, productResponse);
     }
 
     @Operation(summary = "Delete Product By Id")
@@ -58,7 +58,7 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable String id) {
         productService.deleteProduct(id);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully deleted product", id);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_DElETE_PRODUCT_MESSAGE, id);
     }
 
 
@@ -82,7 +82,7 @@ public class ProductController {
                 .maxPrice(maxPrice)
                 .build();
         Page<ProductResponse> allProducts = productService.getAllProducts(productSearchRequest);
-        return ResponseUtil.buildResponsePage(HttpStatus.OK, "Succesfully fetch all product", allProducts);
+        return ResponseUtil.buildResponsePage(HttpStatus.OK, Constant.SUCCESS_GET_ALL_PRODUCT_MESSAGE, allProducts);
     }
 
     @Operation(summary = "Get Product By Id")
@@ -90,6 +90,6 @@ public class ProductController {
     public ResponseEntity<?> getProduct(@PathVariable String id) {
         log.info("Get product");
         ProductResponse product = productService.getProductById(id);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully fetched product", product);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_GET_PRODUCT_MESSAGE, product);
     }
 }

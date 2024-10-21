@@ -36,7 +36,7 @@ public class PaymentController {
                 .signatureKey(request.get("signature_key"))
                 .build();
         orderService.getNotification(midtransNotificationRequest);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "OK", null);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.OK, null);
     }
 
 }

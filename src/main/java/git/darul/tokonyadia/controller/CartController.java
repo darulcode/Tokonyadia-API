@@ -25,27 +25,27 @@ public class CartController {
     @GetMapping
     public ResponseEntity<?> getAllCart(){
         Page<CartResponse> cart = cartService.getAllCart();
-        return ResponseUtil.buildResponsePage(HttpStatus.OK, "Successfully fetch all cart.", cart);
+        return ResponseUtil.buildResponsePage(HttpStatus.OK, Constant.SUCCESS_FETCH_ALL_CART_MESSAGE, cart);
     }
 
     @Operation(summary = "Add Item To Cart")
     @PostMapping
     public ResponseEntity<?> addCart(@RequestBody CartRequest cartRequest){
         CartResponse cartResponse = cartService.addCart(cartRequest);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully added cart.", cartResponse);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_ADD_CART_MESSAGE, cartResponse);
     }
 
     @Operation(summary = "Delete Cart By id")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCart(@PathVariable(name = "id") String id){
         cartService.removeCart(id);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully deleted cart.", null);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_DELETE_CART_MESSAGE, null);
     }
 
     @Operation(summary = "Update Cart")
     @PutMapping
     public ResponseEntity<?> updateCart(@RequestBody CartRequest cartRequest){
         CartResponse cartResponse = cartService.updateCart(cartRequest);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully updated cart.", cartResponse);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_UPDATE_CART_MESSAGE, cartResponse);
     }
 }

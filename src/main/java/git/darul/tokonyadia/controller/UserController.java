@@ -40,14 +40,14 @@ public class UserController {
                 .build();
 
         Page<UserResponse> allUser = userService.getAllUser(request);
-        return ResponseUtil.buildResponsePage(HttpStatus.OK, "Success fetch all users", allUser);
+        return ResponseUtil.buildResponsePage(HttpStatus.OK, Constant.SUCCESS_GET_ALL_USER_MESSAGE, allUser);
     }
 
     @Operation(summary = "update Customer")
     @PostMapping("/update")
     public ResponseEntity<?> update(@RequestBody UserRequest request) {
         UserResponse user = userService.updateUser(request);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully updated user", user);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_UPDATE_USER_MESSAGE, user);
     }
 
 

@@ -29,7 +29,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderRequest) {
         OrderResponse orderResponse = orderService.createOrder(orderRequest);
-        return ResponseUtil.buildResponse(HttpStatus.CREATED, "Succesfully created Order", orderResponse);
+        return ResponseUtil.buildResponse(HttpStatus.CREATED, Constant.SUCCESS_CREATE_ORDER_MESSAGE, orderResponse);
     }
 
     @Operation(summary = "Get All Orders")
@@ -45,14 +45,14 @@ public class OrderController {
                 .sortBy(sortBy)
                 .build();
         Page<OrderResponse> ordersResult = orderService.getAllOrders(request);
-        return ResponseUtil.buildResponsePage(HttpStatus.OK, "Successfully fetch all orders", ordersResult);
+        return ResponseUtil.buildResponsePage(HttpStatus.OK, Constant.SUCCESS_GET_ALL_ORDER_MESSAGE, ordersResult);
     }
 
     @Operation(summary = "Get Order By Id")
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@PathVariable String id) {
         OrderResponse orderResponse = orderService.getById(id);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully fetched Order", orderResponse);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_GET_ORDER_MESSAGE, orderResponse);
     }
 
     @Operation(summary = "Update Status Order")
@@ -60,6 +60,6 @@ public class OrderController {
     @PutMapping
     public ResponseEntity<?> updateOrder(@RequestBody UpdateOrderRequest request) {
         orderService.updateOrderStatus(request);
-        return ResponseEntity.status(HttpStatus.OK).body("Successfully updated Order");
+        return ResponseEntity.status(HttpStatus.OK).body(Constant.SUCCESS_UPDATE_ORDER_MESSAGE);
     }
 }

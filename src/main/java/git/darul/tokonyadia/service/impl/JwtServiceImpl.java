@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.service.JwtService;
 import git.darul.tokonyadia.service.RedisService;
@@ -55,7 +56,7 @@ public class JwtServiceImpl implements JwtService {
                     .sign(algorithm);
         } catch (JWTCreationException e) {
             log.error("error Creating JWT Token :{}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error Creating JWT Token");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Constant.ERROR_CREATE_JWT);
         }
     }
 
@@ -90,7 +91,7 @@ public class JwtServiceImpl implements JwtService {
         DecodedJWT decodedJWT = extractClaimJWT(token);
 
         if (decodedJWT == null) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Token invalid");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Constant.TOKEN_INVALID);
         }
 
         Date expiresAt = decodedJWT.getExpiresAt();

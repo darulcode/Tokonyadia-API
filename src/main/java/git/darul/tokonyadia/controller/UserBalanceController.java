@@ -33,6 +33,6 @@ public class UserBalanceController {
     @GetMapping
     public ResponseEntity<?> getBalance() {
         UserBalanceResponse balance = userBalanceService.getBalance();
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully get balance", balance);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_GET_BALANCE_MESSAGE, balance);
     }
 }

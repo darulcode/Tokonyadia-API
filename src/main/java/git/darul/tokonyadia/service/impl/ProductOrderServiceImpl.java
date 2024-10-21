@@ -1,5 +1,6 @@
 package git.darul.tokonyadia.service.impl;
 
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.request.ProductOrderRequest;
 import git.darul.tokonyadia.dto.response.ProductOrderResponse;
 import git.darul.tokonyadia.entity.Order;
@@ -34,7 +35,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             if (!product.getProductSizes().stream()
                     .anyMatch(productSize -> productSize.getSize().equals(request.getSize()))) {
                 log.error("Product size not found on this product: {}", product.getName());
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product size not found on this product");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.SIZE_NOT_FOUND);
             }
             ProductOrder productOrder = ProductOrder.builder()
                     .order(order)
@@ -72,7 +73,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     @Override
     public ProductOrder getOne(String id) {
         return productOrderRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Product order not found"));
+                new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.PRODUCT_ORDER_NOT_FOUND));
     }
 
 

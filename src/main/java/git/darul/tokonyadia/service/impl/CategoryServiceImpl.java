@@ -1,6 +1,7 @@
 package git.darul.tokonyadia.service.impl;
 
 import git.darul.tokonyadia.constant.CategoryStatus;
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.constant.UserType;
 import git.darul.tokonyadia.dto.request.CategoryRequest;
 import git.darul.tokonyadia.dto.request.PagingAndShortingRequest;
@@ -37,11 +38,11 @@ public class CategoryServiceImpl implements CategoryService {
         UserAccount userAccount = AuthenticationContextUtil.getCurrentUser();
 
         if (userAccount.getUserType().equals(UserType.ROLE_BUYER))
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
 
         Category category = Category.builder().name(request.getName()).status(CategoryStatus.ACTIVE).build();
         Category categoryByName = categoryRepository.findByName(request.getName());
-        if (categoryByName != null) throw new ResponseStatusException(HttpStatus.CONFLICT, "Category name already exists");
+        if (categoryByName != null) throw new ResponseStatusException(HttpStatus.CONFLICT, Constant.DUPLICATE_CATEGORY_MESSAGE);
         categoryRepository.save(category);
         return CategoryResponse.builder().id(category.getId()).statusCategory(category.getStatus().getDescription()).name(category.getName()).build();
     }
@@ -51,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
         UserAccount userAccount = AuthenticationContextUtil.getCurrentUser();
 
         if (userAccount.getUserType().equals(UserType.ROLE_BUYER))
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
 
         Category category = getOne(request.getId());
         category.setName(request.getName());
@@ -65,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
         UserAccount userAccount = AuthenticationContextUtil.getCurrentUser();
 
         if (userAccount.getUserType().equals(UserType.ROLE_BUYER))
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
 
         Category category = getOne(id);
         category.setStatus(CategoryStatus.INACTIVE);
@@ -75,7 +76,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category getOne(String id) {
         Optional<Category> category = categoryRepository.findByIdAndStatus(id, CategoryStatus.ACTIVE);
-        return category.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "category not found"));
+        return category.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.CATEGORY_NOT_FOUND));
     }
 
     @Override

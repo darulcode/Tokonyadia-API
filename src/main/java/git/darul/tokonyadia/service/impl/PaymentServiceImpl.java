@@ -2,6 +2,7 @@ package git.darul.tokonyadia.service.impl;
 
 
 import git.darul.tokonyadia.client.MidtransClient;
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.constant.PaymentStatus;
 import git.darul.tokonyadia.dto.request.MidtransNotificationRequest;
 import git.darul.tokonyadia.dto.request.MidtransPaymentRequest;
@@ -81,7 +82,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public MidtransResponse findPaymentByOrderId(String orderId) {
         Payment payment = paymentRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "payment order not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.PAYMENT_NOT_FOUND));
         return MidtransResponse.builder()
                 .redirectUrl(payment.getRedirectUrl())
                 .build();
@@ -91,10 +92,10 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentStatus getNotification(MidtransNotificationRequest request) {
         log.info("Start getNotification: {}", System.currentTimeMillis());
-        if (!validateSignatureKey(request)) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "invalid signature key");
+        if (!validateSignatureKey(request)) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.INVALID_SIGNATURE);
 
         Payment payment = paymentRepository.findByOrderId(request.getOrderId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "payment order not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.PAYMENT_NOT_FOUND));
 
         PaymentStatus newPaymentStatus = PaymentStatus.fromDescription(request.getTransactionStatus());
         payment.setStatus(newPaymentStatus);
