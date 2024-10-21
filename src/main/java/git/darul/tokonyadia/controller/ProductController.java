@@ -1,5 +1,6 @@
 package git.darul.tokonyadia.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.request.ProductRequest;
 import git.darul.tokonyadia.dto.request.ProductSearchRequest;
@@ -7,6 +8,7 @@ import git.darul.tokonyadia.dto.response.ProductResponse;
 import git.darul.tokonyadia.service.ProductService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,21 +16,33 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(Constant.PRODUCT_API)
+@SecurityRequirement(name = "Bearer Authentication")
 public class ProductController {
 
     private final ProductService productService;
+    private final ObjectMapper objectMapper;
 
     @Operation(summary = "Create Product")
     @PreAuthorize("hasRole('SELLER')")
     @PostMapping
-    public ResponseEntity<?> createProduct(@RequestBody ProductRequest productRequest) {
-        ProductResponse product = productService.createProduct(productRequest);
-        return ResponseUtil.buildResponse(HttpStatus.CREATED, "Successfully created product", product);
+    public ResponseEntity<?> createProduct(
+            @RequestParam(name = "images", required = false) List<MultipartFile> multipartFiles,
+            @RequestPart(name = "product") String product) {
+        try {
+            ProductRequest request = objectMapper.readValue(product, ProductRequest.class);
+            ProductResponse productResult = productService.createProduct(request, multipartFiles);
+            return ResponseUtil.buildResponse(HttpStatus.CREATED, "Successfully created product", productResult);
+        } catch (Exception e) {
+            return ResponseUtil.buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), null);
+        }
     }
 
     @Operation(summary = "Update Product")

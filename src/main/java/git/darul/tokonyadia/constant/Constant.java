@@ -14,6 +14,7 @@ public class Constant {
     public static final String PRODUCT_ORDER_DETAIL_TABLE="t_product_order_detail";
     public static final String SHIPPING_ORDER_DETAIL_TABLE="t_shipping_order_detail";
     public static final String PAYMENT_TABLE="t_payment";
+    public static final String IMAGE_TABLE="m_image";
 
 
     public static final String PRODUCT_TABLE="m_product";
@@ -30,9 +31,11 @@ public class Constant {
     public static final String CART_API="/api/cart";
     public static final String ORDER_API="/api/order";
     public static final String MIDTRANS_NOTIFICATION_API="/api/payments";
+    public static final String IMAGE_API="/api/image";
 
 
 
     public static final String SUCCESS_REGISTERED_MESSAGE="Success registered user";
     public static final String SUCCESS_UPDATE_BALANCE="Successfully updated balance";
+
 }

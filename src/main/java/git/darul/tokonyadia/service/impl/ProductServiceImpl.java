@@ -5,6 +5,7 @@ import git.darul.tokonyadia.constant.ProductStatus;
 import git.darul.tokonyadia.constant.UserType;
 import git.darul.tokonyadia.dto.request.ProductRequest;
 import git.darul.tokonyadia.dto.request.ProductSearchRequest;
+import git.darul.tokonyadia.dto.response.ImageResponse;
 import git.darul.tokonyadia.dto.response.ProductResponse;
 import git.darul.tokonyadia.dto.response.ProductSizeResponse;
 import git.darul.tokonyadia.entity.Category;
@@ -12,6 +13,7 @@ import git.darul.tokonyadia.entity.Product;
 import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.repository.ProductRepository;
 import git.darul.tokonyadia.service.CategoryService;
+import git.darul.tokonyadia.service.ImageService;
 import git.darul.tokonyadia.service.ProductService;
 import git.darul.tokonyadia.service.ProductSizeService;
 import git.darul.tokonyadia.spesification.ProductSpecification;
@@ -29,11 +31,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Service
 @Slf4j
@@ -42,10 +44,11 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final ProductSizeService productSizeService;
+    private final ImageService imageService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public ProductResponse createProduct(ProductRequest request) {
+    public ProductResponse createProduct(ProductRequest request, List<MultipartFile> multipartFiles) {
         UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
         if (currentUser == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         if (currentUser.getUserType().equals(UserType.ROLE_BUYER) ) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
@@ -62,8 +65,9 @@ public class ProductServiceImpl implements ProductService {
                 .condition(ConditionProduct.fromDescription(request.getCondition()))
                 .build();
         productRepository.saveAndFlush(product);
+        List<ImageResponse> imageResponses = imageService.uploadImage(multipartFiles, product);
         List<ProductSizeResponse> productSize = productSizeService.createProductSize(request, product);
-        return getProductResponse(product, productSize);
+        return getProductResponse(product, productSize, imageResponses);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -81,7 +85,8 @@ public class ProductServiceImpl implements ProductService {
         product.setCondition(ConditionProduct.fromDescription(request.getCondition()));
         Product productResult = productRepository.save(product);
         List<ProductSizeResponse> productSizeResponses = productSizeService.updateProductSize(request, productResult);
-        return getProductResponse(productResult, productSizeResponses);
+        List<ImageResponse> imageResponses = imageService.getImageByProduct(productResult);
+        return getProductResponse(productResult, productSizeResponses, imageResponses);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -115,7 +120,8 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> productAll = productRepository.findAll(specification, pageable);
         return productAll.map(product -> {
             List<ProductSizeResponse> productSizeByProductId = productSizeService.getProductSizeByProduct(product);
-            return getProductResponse(product, productSizeByProductId);
+            List<ImageResponse> imageResponses = imageService.getImageByProduct(product);
+            return getProductResponse(product, productSizeByProductId, imageResponses);
         });
 //        return productAll.map(new Function<Product, ProductResponse>() {
 //            @Override
@@ -143,10 +149,11 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse getProductById(String id) {
         Product product = getOne(id);
         List<ProductSizeResponse> productSizeByProduct = productSizeService.getProductSizeByProduct(product);
-        return getProductResponse(product, productSizeByProduct);
+        List<ImageResponse> imageResponses = imageService.getImageByProduct(product);
+        return getProductResponse(product, productSizeByProduct, imageResponses);
     }
 
-    private ProductResponse getProductResponse(Product product, List<ProductSizeResponse> productSize) {
+    private ProductResponse getProductResponse(Product product, List<ProductSizeResponse> productSize, List<ImageResponse> images) {
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -157,6 +164,7 @@ public class ProductServiceImpl implements ProductService {
                 .statusProduct(product.getProductStatus().getDescription())
                 .stock(product.getStock())
                 .productSize(productSize)
+                .image(images)
                 .build();
     }
 }

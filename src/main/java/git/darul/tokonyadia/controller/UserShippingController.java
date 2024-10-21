@@ -6,6 +6,7 @@ import git.darul.tokonyadia.dto.response.UserShippingResponse;
 import git.darul.tokonyadia.service.UserShippingService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(Constant.USER_SHIPPING_API)
 public class UserShippingController {
 

@@ -7,6 +7,7 @@ import git.darul.tokonyadia.dto.response.CategoryResponse;
 import git.darul.tokonyadia.service.CategoryService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(Constant.CATEGORY_API)
 public class CategoryController {
 

@@ -6,6 +6,7 @@ import git.darul.tokonyadia.dto.response.CartResponse;
 import git.darul.tokonyadia.service.CartService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(Constant.CART_API)
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class CartController {
 
     private final CartService cartService;

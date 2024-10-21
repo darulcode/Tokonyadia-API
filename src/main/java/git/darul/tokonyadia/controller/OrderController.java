@@ -8,6 +8,7 @@ import git.darul.tokonyadia.dto.response.OrderResponse;
 import git.darul.tokonyadia.service.OrderService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
+@SecurityRequirement(name = "Bearer Authentication")
 @RequiredArgsConstructor
 @RequestMapping(Constant.ORDER_API)
 public class OrderController {

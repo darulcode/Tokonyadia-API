@@ -5,6 +5,7 @@ import git.darul.tokonyadia.dto.request.ProductSizeRequest;
 import git.darul.tokonyadia.service.ProductSizeService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
+@SecurityRequirement(name = "Bearer Authentication")
 @RequiredArgsConstructor
 @RequestMapping(Constant.PRODUCT_SIZE_API)
 public class ProductSizeController {
