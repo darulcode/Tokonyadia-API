@@ -52,6 +52,7 @@ public class CartServiceImpl implements CartService {
             Integer requestQuantity = cartRequest.getQuantity();
             Integer quantityResult = quantity + requestQuantity;
             cartResult.get().setQuantity(quantityResult);
+            cartResult.get().setCartStatus(CartStatus.ACTIVE);
             if (product.getStock() < quantityResult) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.NOT_ENOUGH_STOCK);
             cartRepository.save(cartResult.get());
             return getCartResponse(cartResult.get());
@@ -125,6 +126,11 @@ public class CartServiceImpl implements CartService {
         cart.setQuantity(cartRequest.getQuantity());
         cartRepository.saveAndFlush(cart);
         return getCartResponse(cart);
+    }
+
+    @Override
+    public Cart getOneCart(String cartId) {
+        return cartRepository.findById(cartId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.CART_NOT_FOUND));
     }
 
     private CartResponse getCartResponse(Cart cart) {

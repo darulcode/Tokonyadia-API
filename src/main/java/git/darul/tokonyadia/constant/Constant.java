@@ -89,6 +89,7 @@ public class Constant {
     public static final String USER_NOT_FOUND="User not found";
     public static final String NOT_ENOUGH_BALANCE="Not enough balance";
     public static final String USER_SHIPPING_NOT_FOUND="User Shipping not found";
+    public static final String CART_ALREADY_REMOVE_OR_CHECKOUT ="Cart is already removed or checkout";
 
 
 }

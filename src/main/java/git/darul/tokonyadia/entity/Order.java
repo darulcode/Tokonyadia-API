@@ -28,6 +28,7 @@ public class Order {
 
     @CreatedDate
     @Column(nullable = false, name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

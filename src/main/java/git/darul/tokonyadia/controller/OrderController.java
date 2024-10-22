@@ -1,6 +1,7 @@
 package git.darul.tokonyadia.controller;
 
 import git.darul.tokonyadia.constant.Constant;
+import git.darul.tokonyadia.dto.request.OrderByCartRequest;
 import git.darul.tokonyadia.dto.request.OrderRequest;
 import git.darul.tokonyadia.dto.request.PagingAndShortingRequest;
 import git.darul.tokonyadia.dto.request.UpdateOrderRequest;
@@ -61,5 +62,11 @@ public class OrderController {
     public ResponseEntity<?> updateOrder(@RequestBody UpdateOrderRequest request) {
         orderService.updateOrderStatus(request);
         return ResponseEntity.status(HttpStatus.OK).body(Constant.SUCCESS_UPDATE_ORDER_MESSAGE);
+    }
+    
+    @PostMapping("/cart")
+    public ResponseEntity<?> createOrderByCart(@RequestBody OrderByCartRequest request) {
+        OrderResponse orderResponse = orderService.createOrderByCart(request);
+        return ResponseUtil.buildResponse(HttpStatus.CREATED, Constant.SUCCESS_CREATE_ORDER_MESSAGE, orderResponse);
     }
 }

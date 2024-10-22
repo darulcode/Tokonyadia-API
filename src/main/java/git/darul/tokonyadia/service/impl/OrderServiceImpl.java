@@ -6,11 +6,13 @@ import git.darul.tokonyadia.dto.response.MidtransResponse;
 import git.darul.tokonyadia.dto.response.OrderResponse;
 import git.darul.tokonyadia.dto.response.ProductOrderResponse;
 import git.darul.tokonyadia.dto.response.ShippingOrderResponse;
+import git.darul.tokonyadia.entity.Cart;
 import git.darul.tokonyadia.entity.Order;
 import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.repository.OrderRepository;
 import git.darul.tokonyadia.service.*;
 import git.darul.tokonyadia.util.AuthenticationContextUtil;
+import git.darul.tokonyadia.util.DateUtil;
 import git.darul.tokonyadia.util.ShortUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentService paymentService;
     private final UserBalanceService userBalanceService;
     private final ProductService productService;
+    private final CartService cartService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -65,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
             userBalanceService.updateBalanceWhileOrder(totalAmount,currentUser);
             return getOrderResponse(orderResult, productOrderResponses, shippingOrderResponse, MidtransResponse.builder().redirectUrl(null).build());
         }
-        MidtransResponse midtransResponse = paymentService.cratePayment(orderRequest.getProductDetails(), orderResult);
+        MidtransResponse midtransResponse = paymentService.createPayment(orderRequest.getProductDetails(), orderResult);
         return getOrderResponse(orderResult, productOrderResponses, shippingOrderResponse, midtransResponse);
     }
 
@@ -137,6 +140,7 @@ public class OrderServiceImpl implements OrderService {
     public void getNotification(MidtransNotificationRequest request) {
         Order order = getOne(request.getOrderId());
         PaymentStatus paymentStatus = paymentService.getNotification(request);
+        log.info("payment status :{}", paymentStatus);
 
         if (paymentStatus != null && paymentStatus.equals(PaymentStatus.SETTLEMENT)) {
             order.setStatus(StatusOrder.DELIVERY);
@@ -146,14 +150,37 @@ public class OrderServiceImpl implements OrderService {
             order.setStatus(StatusOrder.CANCEL);
         }
 
+    }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public OrderResponse createOrderByCart(OrderByCartRequest request) {
+        Cart cart = cartService.getOneCart(request.getIdCart());
+        if (cart.getCartStatus().equals(CartStatus.INACTIVE)) throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.CART_ALREADY_REMOVE_OR_CHECKOUT);
+        UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
+        if (currentUser == null || !cart.getUserAccount().getId().equals(currentUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
+        }
+        ProductOrderRequest productOrder = ProductOrderRequest.builder()
+                .quantity(cart.getQuantity())
+                .productId(cart.getProduct().getId())
+                .size(cart.getSize())
+                .build();
+        OrderRequest orderRequest = OrderRequest.builder()
+                .userShippingId(request.getShippingId())
+                .shippingMethod(request.getShippingMethod())
+                .paymentMethod(request.getPaymentMethod())
+                .productDetails(List.of(productOrder))
+                .build();
+        cartService.removeCart(request.getIdCart());
+        return createOrder(orderRequest);
     }
 
     private OrderResponse getOrderResponse(Order order,List<ProductOrderResponse> productOrderResponse, ShippingOrderResponse shippingOrderResponse, MidtransResponse midtransResponse) {
         return OrderResponse.builder()
                 .id(order.getId())
                 .userId(order.getUserAccount().getId())
-                .orderDate(order.getCreatedAt())
+                .orderDate(DateUtil.localDateTimeToString(order.getCreatedAt()))
                 .shippingMethod(order.getShippingMethod().getDescription())
                 .shippingOrder(shippingOrderResponse)
                 .productDetails(productOrderResponse)

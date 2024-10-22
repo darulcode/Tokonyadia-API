@@ -43,7 +43,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public MidtransResponse cratePayment(List<ProductOrderRequest> requests, Order order) {
+    public MidtransResponse createPayment(List<ProductOrderRequest> requests, Order order) {
         long grossAmount = 0;
         for (ProductOrderRequest productOrder : requests) {
             Product product = productService.getOne(productOrder.getProductId());
@@ -52,7 +52,7 @@ public class PaymentServiceImpl implements PaymentService {
         MidtransPaymentRequest midtransPaymentRequest = MidtransPaymentRequest.builder()
                 .enablePayments(List.of("bca_va", "gopay", "shopeepay", "other_qris"))
                 .transactionDetails(MidtransTransactionRequest.builder()
-                        .grossAmount(grossAmount + ((grossAmount * 100) / 12))
+                        .grossAmount(grossAmount + ((grossAmount * 100) / 1200))
                         .orderId(order.getId())
                         .build())
                 .build();
@@ -62,12 +62,13 @@ public class PaymentServiceImpl implements PaymentService {
 
         String headerValue = "Basic " + Base64.getEncoder().encodeToString(MIDTRANS_SERVER_KEY.getBytes(StandardCharsets.UTF_8));
         MidtransResponse snapTransaction = midtransClient.createSnapTransaction(midtransPaymentRequest, headerValue);
-
+        log.info("payment token :{}",snapTransaction.getToken());
+        log.info("payment redirect url :{}",snapTransaction.getRedirectUrl());
         Payment payment = Payment.builder()
                 .order(order)
                 .status(PaymentStatus.PENDING)
                 .redirectUrl(snapTransaction.getRedirectUrl())
-                .amount(grossAmount + ((grossAmount * 100) / 12))
+                .amount(grossAmount + ((grossAmount * 100) / 1200))
                 .updateAt(LocalDateTime.now())
                 .build();
 

@@ -1,3 +1,5 @@
+package git.darul.tokonyadia.service.impl;
+
 import git.darul.tokonyadia.constant.UserType;
 import git.darul.tokonyadia.dto.request.UserRequest;
 import git.darul.tokonyadia.dto.response.UserResponse;
@@ -5,7 +7,6 @@ import git.darul.tokonyadia.entity.User;
 import git.darul.tokonyadia.entity.UserAccount;
 import git.darul.tokonyadia.repository.UserRepository;
 import git.darul.tokonyadia.service.UserAccountService;
-import git.darul.tokonyadia.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -36,8 +37,7 @@ class UserServiceImplTest {
         UserRequest request = new UserRequest("abdul", "abdul@gmail.com", "085268487440", "abdul", "abdul");
         UserAccount userAccount = new UserAccount();
         userAccount.setId("1");
-        // Set UserType untuk menghindari NullPointerException
-        userAccount.setUserType(UserType.ROLE_BUYER);  // Atur tipe user sesuai kebutuhan test
+        userAccount.setUserType(UserType.ROLE_BUYER);
 
         when(userAccountService.create(request)).thenReturn(userAccount);
 
