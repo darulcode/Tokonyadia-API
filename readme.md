@@ -1,7 +1,6 @@
-
 # Tokonyadia
 
-Proyek ini adalah aplikasi e-commerce yang dikembangkan sebagai tugas ebigmacamp. Aplikasi ini memungkinkan pengguna untuk melakukan pembelian produk dengan fitur autentikasi pengguna, manajemen token, dan lainnya.
+Proyek ini adalah aplikasi e-commerce yang dikembangkan sebagai tugas enigmacamp. Aplikasi ini memungkinkan pengguna untuk melakukan pembelian produk dengan fitur autentikasi pengguna, manajemen token, dan lainnya.
 
 ## Fitur Utama
 
@@ -16,7 +15,7 @@ Proyek ini adalah aplikasi e-commerce yang dikembangkan sebagai tugas ebigmacamp
 - **Pesanan (Order)**: Pengguna dapat mengelola dan melacak pesanan yang telah dilakukan.
 - **Pembayaran**: Menggunakan Midtrans dan saldo pengguna untuk memproses transaksi.
 - **Ukuran Produk**: Fitur untuk mengambil dan memperbarui ukuran pada produk tertentu.
-- **User Balance** Fitur yang digunakan untuk pembayaran selain midtrans, saldo cuman bisa diisi oleh admin.
+- **User Balance**: Fitur yang digunakan untuk pembayaran selain midtrans, saldo hanya bisa diisi oleh admin.
 - **Alamat Pengiriman (User Shipping)**: Memungkinkan pengguna untuk mengelola alamat pengiriman mereka.
 
 ## Teknologi yang Digunakan
@@ -45,29 +44,38 @@ Untuk menjalankan proyek ini, ikuti langkah-langkah berikut:
    ```bash
    git clone https://github.com/username/tokonyadia.git
    cd(tokonyadia)
-   ```
-
 2. **Setup PostgreSQL**:
-    - Buat database baru dengan nama `tokonyadia`(opsional).
+
+    Buat database baru dengan nama tokonyadia (opsional).
 
 3. **Setup Redis**:
+
     - Pastikan Redis sudah terinstall dan berjalan di lokal.
-    - Anda dapat mengunduh Redis dari [situs resmi Redis](https://redis.io/download) dan mengikuti instruksi pemasangan.
+    - Anda dapat mengunduh Redis dari situs resmi Redis dan mengikuti instruksi pemasangan.
     - Untuk memulai Redis, jalankan perintah berikut:
-      ```bash
-      redis-server
-      ```
+
+   ```bash
+    redis-server
 
 4. **Setup Midtrans**:
-    - Daftar dan buat akun di [Midtrans](https://midtrans.com).
-    - Buat proyek baru di dashboard Midtrans untuk mendapatkan `Client Key` dan `Server Key`.
-    - Konfigurasikan `Client Key` dan `Server Key` di file konfigurasi aplikasi  di `application.properties` .
-      ```properties
-      midtrans.server.key=YOUR_SECRET_KEY
-      ```
+   - Daftar dan buat akun di [Midtrans](https://midtrans.com).
+   - Buat proyek baru di dashboard Midtrans untuk mendapatkan `Client Key` dan `Server Key`.
+   - Konfigurasikan `Client Key` dan `Server Key` di file konfigurasi aplikasi di `application.properties`:
+     ```properties
+     midtrans.server.key=YOUR_SECRET_KEY
+     ```
 
 5. **Jalankan Aplikasi**:
-    - Setelah semua pengaturan selesai, jalankan aplikasi menggunakan perintah:
-      ```bash
-      ./mvnw spring-boot:run
-      ```
+   - **Menggunakan Docker**: Anda dapat menjalankan aplikasi menggunakan Docker dengan file `Dockerfile` dan `docker-compose.yml` yang sudah disediakan. Jalankan perintah berikut untuk membangun dan menjalankan semua layanan:
+     ```bash
+     docker-compose up --build
+     ```
+
+Setelah semua layanan berhasil berjalan, Anda dapat mengakses aplikasi di browser dengan mengunjungi:
+
+http://localhost:8082
+
+- **Tanpa Docker**: Jika tidak menggunakan Docker, jalankan aplikasi menggunakan perintah:
+  ```bash
+  ./mvnw spring-boot:run
+
