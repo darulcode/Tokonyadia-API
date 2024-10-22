@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_DB: tokonyadia
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tokonyadia_network
+
+  redis:
+    image: redis:latest
+    container_name: redis_container
+    ports:
+      - "6379:6379"
+    networks:
+      - tokonyadia_network
+
+  tokonyadia:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tokonyadia_container
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_APPLICATION_NAME: tokonyadia
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tokonyadia
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      JWT_SECRET: secret
+      JWT_EXPIRATION_IN_MINUTES: 5
+      JWT_ISSUER: Tokonyadia
+      REFRESH_TOKEN_EXPIRATION_IN_HOUR: 24
+      CLOUDINARY_NAME: dgodtvrvm
+      CLOUDINARY_API_KEY: 697688718351951
+      CLOUDINARY_SECRET_KEY: xIjmvyhRqj5uN8SA2n8DF_5tFE4
+      MIDTRANS_API_URL: https://app.sandbox.midtrans.com
+      SECRET_KEY_MIDTRANS: SB-Mid-server-fxnrpDnqWrXRONOyZ5bhiFYV
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - tokonyadia_network
+
+volumes:
+  postgres_data:
+
+networks:
+  tokonyadia_network:
+    driver: bridge
