@@ -1,9 +1,6 @@
 package git.darul.tokonyadia.service;
 
-import git.darul.tokonyadia.dto.request.MidtransNotificationRequest;
-import git.darul.tokonyadia.dto.request.OrderRequest;
-import git.darul.tokonyadia.dto.request.PagingAndShortingRequest;
-import git.darul.tokonyadia.dto.request.UpdateOrderRequest;
+import git.darul.tokonyadia.dto.request.*;
 import git.darul.tokonyadia.dto.response.OrderResponse;
 import git.darul.tokonyadia.entity.Order;
 import org.springframework.data.domain.Page;
@@ -15,4 +12,5 @@ public interface OrderService {
     void updateOrderStatus(UpdateOrderRequest request);
     Order getOne(String id);
     void getNotification(MidtransNotificationRequest request);
+    OrderResponse createOrderByCart(OrderByCartRequest request);
 }

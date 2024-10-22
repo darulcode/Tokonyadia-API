@@ -1,5 +1,6 @@
 package git.darul.tokonyadia.service.impl;
 
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.request.UserBalanceRequest;
 import git.darul.tokonyadia.dto.response.UserBalanceResponse;
 import git.darul.tokonyadia.entity.UserAccount;
@@ -62,8 +63,8 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     @Override
     public void updateBalanceWhileOrder(Long amount, UserAccount userAccount) {
         UserBalance userBalance = userBalanceRepository.findByUserAccount(userAccount).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "User Account Not FOund"));
-        if (userBalance.getBalance() < amount) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not enough balance");
+                new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.USER_NOT_FOUND));
+        if (userBalance.getBalance() < amount) throw new ResponseStatusException(HttpStatus.FORBIDDEN, Constant.NOT_ENOUGH_BALANCE);
         userBalance.setBalance(userBalance.getBalance() - amount);
         userBalanceRepository.save(userBalance);
     }

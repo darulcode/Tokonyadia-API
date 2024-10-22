@@ -1,5 +1,6 @@
 package git.darul.tokonyadia.service.impl;
 
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.response.ShippingOrderResponse;
 import git.darul.tokonyadia.entity.Order;
 import git.darul.tokonyadia.entity.ShippingOrder;
@@ -41,7 +42,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     @Override
     public ShippingOrderResponse findByOrder(Order order) {
         ShippingOrder shippingOrder = shippingOrderRepository.findByOrder(order).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+                new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.ORDER_NOT_FOUND));
         return getShippingOrderResponse(shippingOrder);
     }
 
@@ -55,7 +56,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public ShippingOrder getOne(String id) {
-        return shippingOrderRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "shipping order not found"));
+        return shippingOrderRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.SHIPPING_ORDER_NOT_FOUND));
     }
 
     private ShippingOrderResponse getShippingOrderResponse(ShippingOrder shippingOrder) {

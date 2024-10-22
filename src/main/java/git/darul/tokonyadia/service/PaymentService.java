@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface PaymentService {
 
-    MidtransResponse cratePayment(List<ProductOrderRequest> requests, Order order);
+    MidtransResponse createPayment(List<ProductOrderRequest> requests, Order order);
     MidtransResponse findPaymentByOrderId(String orderId);
     PaymentStatus getNotification(MidtransNotificationRequest request);
 }

@@ -19,4 +19,5 @@ public class ProductResponse {
     private String statusProduct;
     private String categoryId;
     private List<ProductSizeResponse> productSize;
+    private List<ImageResponse> image;
 }

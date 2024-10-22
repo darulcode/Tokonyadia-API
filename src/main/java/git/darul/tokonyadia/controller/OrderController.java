@@ -1,6 +1,7 @@
 package git.darul.tokonyadia.controller;
 
 import git.darul.tokonyadia.constant.Constant;
+import git.darul.tokonyadia.dto.request.OrderByCartRequest;
 import git.darul.tokonyadia.dto.request.OrderRequest;
 import git.darul.tokonyadia.dto.request.PagingAndShortingRequest;
 import git.darul.tokonyadia.dto.request.UpdateOrderRequest;
@@ -8,6 +9,7 @@ import git.darul.tokonyadia.dto.response.OrderResponse;
 import git.darul.tokonyadia.service.OrderService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
+@SecurityRequirement(name = "Bearer Authentication")
 @RequiredArgsConstructor
 @RequestMapping(Constant.ORDER_API)
 public class OrderController {
@@ -27,7 +30,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderRequest) {
         OrderResponse orderResponse = orderService.createOrder(orderRequest);
-        return ResponseUtil.buildResponse(HttpStatus.CREATED, "Succesfully created Order", orderResponse);
+        return ResponseUtil.buildResponse(HttpStatus.CREATED, Constant.SUCCESS_CREATE_ORDER_MESSAGE, orderResponse);
     }
 
     @Operation(summary = "Get All Orders")
@@ -43,14 +46,14 @@ public class OrderController {
                 .sortBy(sortBy)
                 .build();
         Page<OrderResponse> ordersResult = orderService.getAllOrders(request);
-        return ResponseUtil.buildResponsePage(HttpStatus.OK, "Successfully fetch all orders", ordersResult);
+        return ResponseUtil.buildResponsePage(HttpStatus.OK, Constant.SUCCESS_GET_ALL_ORDER_MESSAGE, ordersResult);
     }
 
     @Operation(summary = "Get Order By Id")
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@PathVariable String id) {
         OrderResponse orderResponse = orderService.getById(id);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully fetched Order", orderResponse);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_GET_ORDER_MESSAGE, orderResponse);
     }
 
     @Operation(summary = "Update Status Order")
@@ -58,6 +61,12 @@ public class OrderController {
     @PutMapping
     public ResponseEntity<?> updateOrder(@RequestBody UpdateOrderRequest request) {
         orderService.updateOrderStatus(request);
-        return ResponseEntity.status(HttpStatus.OK).body("Successfully updated Order");
+        return ResponseEntity.status(HttpStatus.OK).body(Constant.SUCCESS_UPDATE_ORDER_MESSAGE);
+    }
+    
+    @PostMapping("/cart")
+    public ResponseEntity<?> createOrderByCart(@RequestBody OrderByCartRequest request) {
+        OrderResponse orderResponse = orderService.createOrderByCart(request);
+        return ResponseUtil.buildResponse(HttpStatus.CREATED, Constant.SUCCESS_CREATE_ORDER_MESSAGE, orderResponse);
     }
 }

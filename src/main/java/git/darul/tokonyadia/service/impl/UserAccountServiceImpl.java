@@ -1,6 +1,7 @@
 package git.darul.tokonyadia.service.impl;
 
 
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.constant.UserType;
 import git.darul.tokonyadia.dto.request.UserRequest;
 import git.darul.tokonyadia.entity.UserAccount;
@@ -55,13 +56,13 @@ public class UserAccountServiceImpl implements UserAccountService, UserDetailsSe
     public UserAccount getOne(String id) {
         Optional<UserAccount> userAccount = userAccountRepository.findById(id);
         if (userAccount.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.USER_NOT_FOUND);
         }
         return userAccount.get();
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userAccountRepository.findByUsername(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
+        return userAccountRepository.findByUsername(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.USER_NOT_FOUND));
     }
 }

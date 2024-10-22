@@ -1,5 +1,6 @@
 package git.darul.tokonyadia.service.impl;
 
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.request.ProductRequest;
 import git.darul.tokonyadia.dto.request.ProductSizeRequest;
 import git.darul.tokonyadia.dto.response.ProductSizeResponse;
@@ -73,7 +74,7 @@ public class ProductSizeServiceImpl implements ProductSizeService {
     public void deleteProductSize(String id) {
         productSizeRepository.findById(id).ifPresentOrElse(
                 productSizeRepository::delete,
-                () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Size ID not found"); }
+                () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.SIZE_NOT_FOUND); }
         );
     }
 
@@ -84,7 +85,7 @@ public class ProductSizeServiceImpl implements ProductSizeService {
                     productSize.setSize(request.getSize());
                     productSizeRepository.save(productSize);
                 },
-                () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Size ID not found"); }
+                () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.SIZE_NOT_FOUND); }
         );
     }
 

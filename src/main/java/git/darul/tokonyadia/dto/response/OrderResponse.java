@@ -2,7 +2,6 @@ package git.darul.tokonyadia.dto.response;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Setter
@@ -12,7 +11,7 @@ import java.util.List;
 @Builder
 public class OrderResponse {
     private String id;
-    private LocalDateTime orderDate;
+    private String orderDate;
     private String userId;
     private String shippingMethod;
     private ShippingOrderResponse shippingOrder;

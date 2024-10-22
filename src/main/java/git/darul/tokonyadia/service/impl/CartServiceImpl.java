@@ -1,6 +1,7 @@
 package git.darul.tokonyadia.service.impl;
 
 import git.darul.tokonyadia.constant.CartStatus;
+import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.request.CartRequest;
 import git.darul.tokonyadia.dto.response.CartResponse;
 import git.darul.tokonyadia.dto.response.ProductSizeResponse;
@@ -39,11 +40,11 @@ public class CartServiceImpl implements CartService {
     public CartResponse addCart(CartRequest cartRequest) {
         UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
         if (currentUser == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         }
         Product product = productService.getOne(cartRequest.getProductId());
         if (product.getStock() < cartRequest.getQuantity()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough stock");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.NOT_ENOUGH_STOCK);
         }
         Optional<Cart> cartResult = cartRepository.findByUserAccountAndProduct(currentUser, product);
         if (cartResult.isPresent()) {
@@ -51,7 +52,8 @@ public class CartServiceImpl implements CartService {
             Integer requestQuantity = cartRequest.getQuantity();
             Integer quantityResult = quantity + requestQuantity;
             cartResult.get().setQuantity(quantityResult);
-            if (product.getStock() < quantityResult) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough stock");
+            cartResult.get().setCartStatus(CartStatus.ACTIVE);
+            if (product.getStock() < quantityResult) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.NOT_ENOUGH_STOCK);
             cartRepository.save(cartResult.get());
             return getCartResponse(cartResult.get());
         }
@@ -59,7 +61,7 @@ public class CartServiceImpl implements CartService {
         boolean sizeExists = productSizes.stream()
                 .anyMatch(ps -> ps.getSize().equals(cartRequest.getSize()));
         if (!sizeExists) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Size not found");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.SIZE_NOT_FOUND);
         }
         Cart cart = Cart.builder()
                 .cartStatus(CartStatus.ACTIVE)
@@ -79,15 +81,15 @@ public class CartServiceImpl implements CartService {
         cartRepository.findById(id).ifPresentOrElse(
                 cart -> {
                     UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
-                    if (currentUser == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+                    if (currentUser == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
                     if (!currentUser.getId().equals(cart.getUserAccount().getId())) {
-                        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+                        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
                     }
                     cart.setCartStatus(CartStatus.INACTIVE);
                     cart.setQuantity(0);
                     cartRepository.save(cart);
                 },
-                () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found"); }
+                () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.CART_NOT_FOUND); }
         );
 
     }
@@ -98,7 +100,7 @@ public class CartServiceImpl implements CartService {
         Pageable pageable = PageRequest.of(0, 10);
         UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
         if (currentUser == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         }
         Page<Cart> cartList = cartRepository.findByUserAccountAndCartStatus(currentUser, CartStatus.ACTIVE, pageable);
         return cartList.map(this::getCartResponse);
@@ -108,22 +110,27 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartResponse updateCart(CartRequest cartRequest) {
-        Cart cart = cartRepository.findById(cartRequest.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found"));
+        Cart cart = cartRepository.findById(cartRequest.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.CART_NOT_FOUND));
         Product product = productService.getOne(cart.getProduct().getId());
         UserAccount currentUser = AuthenticationContextUtil.getCurrentUser();
-        if (currentUser == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        if (currentUser == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         if (!currentUser.getId().equals(cart.getUserAccount().getId()) ) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.UNAUTHORIZED_MESSAGE);
         }
         log.info("stok + quantity : {}", product.getStock() + cart.getQuantity());
         log.info("stok  : {}", product.getStock() );
         if (product.getStock() < cartRequest.getQuantity()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough stock");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.NOT_ENOUGH_STOCK);
         }
         log.info("update stok :{}", (cart.getQuantity() + product.getStock()) - cartRequest.getQuantity());
         cart.setQuantity(cartRequest.getQuantity());
         cartRepository.saveAndFlush(cart);
         return getCartResponse(cart);
+    }
+
+    @Override
+    public Cart getOneCart(String cartId) {
+        return cartRepository.findById(cartId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.CART_NOT_FOUND));
     }
 
     private CartResponse getCartResponse(Cart cart) {

@@ -7,6 +7,7 @@ import git.darul.tokonyadia.dto.response.UserResponse;
 import git.darul.tokonyadia.service.UserService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(Constant.USER_API)
 public class UserController {
     private final UserService userService;
@@ -38,14 +40,14 @@ public class UserController {
                 .build();
 
         Page<UserResponse> allUser = userService.getAllUser(request);
-        return ResponseUtil.buildResponsePage(HttpStatus.OK, "Success fetch all users", allUser);
+        return ResponseUtil.buildResponsePage(HttpStatus.OK, Constant.SUCCESS_GET_ALL_USER_MESSAGE, allUser);
     }
 
     @Operation(summary = "update Customer")
     @PostMapping("/update")
     public ResponseEntity<?> update(@RequestBody UserRequest request) {
         UserResponse user = userService.updateUser(request);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully updated user", user);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_UPDATE_USER_MESSAGE, user);
     }
 
 

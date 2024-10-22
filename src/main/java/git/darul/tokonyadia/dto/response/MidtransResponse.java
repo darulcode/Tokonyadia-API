@@ -12,5 +12,7 @@ public class MidtransResponse {
 
     @JsonProperty(value = "redirect_url")
     private String redirectUrl;
+    @JsonProperty(value = "token")
+    private String token;
 
 }

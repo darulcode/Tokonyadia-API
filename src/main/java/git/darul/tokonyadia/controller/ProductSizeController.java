@@ -5,6 +5,7 @@ import git.darul.tokonyadia.dto.request.ProductSizeRequest;
 import git.darul.tokonyadia.service.ProductSizeService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
+@SecurityRequirement(name = "Bearer Authentication")
 @RequiredArgsConstructor
 @RequestMapping(Constant.PRODUCT_SIZE_API)
 public class ProductSizeController {
@@ -26,7 +28,7 @@ public class ProductSizeController {
     public ResponseEntity<?> deleteProductSize(@PathVariable(name = "id") String id) {
         log.info("Deleting product size {}", id);
         productSizeService.deleteProductSize(id);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully delete size", null);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_DELETE_SIZE_MESSAGE, null);
     }
 
     @Operation(summary = "Update Product")
@@ -36,7 +38,7 @@ public class ProductSizeController {
         request.setId(id);
         log.info("Updating product size {}", id);
         productSizeService.updateByid(request);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully update size", null);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_UPDATE_SIZE_MESSAGE, null);
     }
 
 }

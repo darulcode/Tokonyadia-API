@@ -7,6 +7,7 @@ import git.darul.tokonyadia.dto.response.CategoryResponse;
 import git.darul.tokonyadia.service.CategoryService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(Constant.CATEGORY_API)
 public class CategoryController {
 
@@ -26,7 +28,7 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestBody CategoryRequest request) {
         CategoryResponse category = categoryService.createCategory(request);
-        return ResponseUtil.buildResponse(HttpStatus.CREATED, "Successfully created category", category);
+        return ResponseUtil.buildResponse(HttpStatus.CREATED, Constant.SUCCESS_CREATE_CATEGORY_MESSAGE, category);
     }
 
     @Operation(summary = "Update Cart")
@@ -34,7 +36,7 @@ public class CategoryController {
     @PutMapping
     public ResponseEntity<?> updateCategory(@RequestBody CategoryRequest request) {
         CategoryResponse category = categoryService.updateCategory(request);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully updated category", category);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_UPDATE_CATEGORY_MESSAGE, category);
     }
 
     @Operation(summary = "Delete category")
@@ -42,7 +44,7 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable String id) {
         categoryService.deleteCategory(id);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully deleted category", null);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_DELETE_CATEGORY_MESSAGE, null);
     }
 
     @Operation(summary = "Get All Categories")
@@ -55,13 +57,13 @@ public class CategoryController {
                 .build();
 
         Page<CategoryResponse> allCategories = categoryService.getAllCategories(request);
-        return ResponseUtil.buildResponsePage(HttpStatus.OK, "Successfully fetch all category", allCategories);
+        return ResponseUtil.buildResponsePage(HttpStatus.OK, Constant.SUCCESS_GET_ALL_CATEGORY_MESSAGE, allCategories);
     }
 
     @Operation(summary = "Get Category By Id")
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategory(@PathVariable String id) {
         CategoryResponse category = categoryService.getCategoryById(id);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully fetch category", category);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_GET_CATEGORY_MESSAGE, category);
     }
 }

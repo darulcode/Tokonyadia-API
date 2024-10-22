@@ -1,5 +1,6 @@
 package git.darul.tokonyadia.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import git.darul.tokonyadia.constant.Constant;
 import git.darul.tokonyadia.dto.request.ProductRequest;
 import git.darul.tokonyadia.dto.request.ProductSearchRequest;
@@ -7,28 +8,49 @@ import git.darul.tokonyadia.dto.response.ProductResponse;
 import git.darul.tokonyadia.service.ProductService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(Constant.PRODUCT_API)
+@SecurityRequirement(name = "Bearer Authentication")
 public class ProductController {
 
     private final ProductService productService;
+    private final ObjectMapper objectMapper;
 
     @Operation(summary = "Create Product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Files uploaded successfully", content = @Content)
+    })
     @PreAuthorize("hasRole('SELLER')")
-    @PostMapping
-    public ResponseEntity<?> createProduct(@RequestBody ProductRequest productRequest) {
-        ProductResponse product = productService.createProduct(productRequest);
-        return ResponseUtil.buildResponse(HttpStatus.CREATED, "Successfully created product", product);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createProduct(
+            @Parameter(content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)) @RequestPart(name = "images", required = false) List<MultipartFile> multipartFiles,
+            @RequestPart(name = "product") String product) {
+        try {
+            ProductRequest request = objectMapper.readValue(product, ProductRequest.class);
+            ProductResponse productResult = productService.createProduct(request, multipartFiles);
+            return ResponseUtil.buildResponse(HttpStatus.CREATED, Constant.SUCCESS_CREATE_PRODUCT_MESSAGE, productResult);
+        } catch (Exception e) {
+            return ResponseUtil.buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), null);
+        }
     }
 
     @Operation(summary = "Update Product")
@@ -36,7 +58,7 @@ public class ProductController {
     @PutMapping
     public ResponseEntity<?> updateProduct(@RequestBody ProductRequest productRequest) {
         ProductResponse productResponse = productService.updateProduct(productRequest);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully updated product", productResponse);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_UPDATE_PRODUCT_MESSAGE, productResponse);
     }
 
     @Operation(summary = "Delete Product By Id")
@@ -44,7 +66,7 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable String id) {
         productService.deleteProduct(id);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully deleted product", id);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_DElETE_PRODUCT_MESSAGE, id);
     }
 
 
@@ -68,7 +90,7 @@ public class ProductController {
                 .maxPrice(maxPrice)
                 .build();
         Page<ProductResponse> allProducts = productService.getAllProducts(productSearchRequest);
-        return ResponseUtil.buildResponsePage(HttpStatus.OK, "Succesfully fetch all product", allProducts);
+        return ResponseUtil.buildResponsePage(HttpStatus.OK, Constant.SUCCESS_GET_ALL_PRODUCT_MESSAGE, allProducts);
     }
 
     @Operation(summary = "Get Product By Id")
@@ -76,6 +98,6 @@ public class ProductController {
     public ResponseEntity<?> getProduct(@PathVariable String id) {
         log.info("Get product");
         ProductResponse product = productService.getProductById(id);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "Successfully fetched product", product);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.SUCCESS_GET_PRODUCT_MESSAGE, product);
     }
 }

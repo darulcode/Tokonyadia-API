@@ -5,6 +5,7 @@ import git.darul.tokonyadia.dto.request.MidtransNotificationRequest;
 import git.darul.tokonyadia.service.OrderService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(Constant.MIDTRANS_NOTIFICATION_API)
 public class PaymentController {
 
@@ -34,7 +36,7 @@ public class PaymentController {
                 .signatureKey(request.get("signature_key"))
                 .build();
         orderService.getNotification(midtransNotificationRequest);
-        return ResponseUtil.buildResponse(HttpStatus.OK, "OK", null);
+        return ResponseUtil.buildResponse(HttpStatus.OK, Constant.OK, null);
     }
 
 }

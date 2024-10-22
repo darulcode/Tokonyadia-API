@@ -8,14 +8,21 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@OpenAPIDefinition(info = @Info(
-        title = "Tokonyadia",
-        version = "1.0",
-        contact = @Contact(
-                name = "Tokonyadia",
-                url = "https://tokonyadia.com"
-        )
-)
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Tokonyadia",
+                version = "1.0",
+                contact = @Contact(
+                        name = "Tokonyadia",
+                        url = "https://tokonyadia.com"
+                )
+        ),
+        servers = {
+                @io.swagger.v3.oas.annotations.servers.Server(
+                        url = "https://7b5f-182-253-247-224.ngrok-free.app", // URL Ngrok HTTPS
+                        description = "Ngrok HTTPS Server"
+                )
+        }
 )
 @SecurityScheme(
         name = "Bearer Authentication",
