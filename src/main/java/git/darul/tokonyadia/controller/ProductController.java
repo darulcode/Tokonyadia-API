@@ -8,6 +8,7 @@ import git.darul.tokonyadia.dto.response.ProductResponse;
 import git.darul.tokonyadia.service.ProductService;
 import git.darul.tokonyadia.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -41,7 +42,7 @@ public class ProductController {
     @PreAuthorize("hasRole('SELLER')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProduct(
-            @RequestParam(name = "images", required = false) List<MultipartFile> multipartFiles,
+            @Parameter(content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)) @RequestPart(name = "images", required = false) List<MultipartFile> multipartFiles,
             @RequestPart(name = "product") String product) {
         try {
             ProductRequest request = objectMapper.readValue(product, ProductRequest.class);
