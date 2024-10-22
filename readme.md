@@ -16,6 +16,7 @@ Proyek ini adalah aplikasi e-commerce yang dikembangkan sebagai tugas ebigmacamp
 - **Pesanan (Order)**: Pengguna dapat mengelola dan melacak pesanan yang telah dilakukan.
 - **Pembayaran**: Menggunakan Midtrans dan saldo pengguna untuk memproses transaksi.
 - **Ukuran Produk**: Fitur untuk mengambil dan memperbarui ukuran pada produk tertentu.
+- **User Balance** Fitur yang digunakan untuk pembayaran selain midtrans, saldo cuman bisa diisi oleh admin.
 - **Alamat Pengiriman (User Shipping)**: Memungkinkan pengguna untuk mengelola alamat pengiriman mereka.
 
 ## Teknologi yang Digunakan

@@ -10,7 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins( "http://localhost:8082", "https://0564-182-253-247-224.ngrok-free.app")  // URL Ngrok dan Localhost
+                .allowedOrigins( "http://localhost:8082", "https://7b5f-182-253-247-224.ngrok-free.app")  // URL Ngrok dan Localhost
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // Metode HTTP yang diizinkan
                 .allowedHeaders("*")  // Header yang diizinkan
                 .allowCredentials(true);  // Jika autentikasi diperlukan
